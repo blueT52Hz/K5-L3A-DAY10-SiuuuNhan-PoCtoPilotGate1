@@ -346,14 +346,14 @@ Thẻ S5 dùng mục này cho một con số kinh doanh: chi phí mỗi ticket t
 
 | | Chỉ số theo dõi mới của bàn |
 |---|---|
-| **Tên trong `MONITORS`** | |
-| **Bước / hành vi được đo** | |
-| **Thước đo** (một câu, có đơn vị) | |
-| **Dữ liệu** (trường nào của trial, không có nhãn) | |
-| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | |
-| **Khung thời gian / ngưỡng báo động** | |
-| **Điểm mù** (chỉ số này KHÔNG thấy gì) | |
-| Giá trị trên bộ nền · trên thẻ (đọc mục `monitor` của report) | |
+| **Tên trong `MONITORS`** | `max_auto_faults_per_carrier_day` (chính) · kèm `fault_gate_block_rate` |
+| **Bước / hành vi được đo** | Bước ghi lỗi hãng (`file_carrier_fault`) gom theo hãng và theo ngày: tác hại cho bên thứ ba (hãng bị phạt dồn) |
+| **Thước đo** (một câu, có đơn vị) | Số lỗi tự động lớn nhất mà MỘT hãng nhận trong MỘT ngày vận hành (đơn vị: lỗi / hãng / ngày). Kèm: tỉ lệ lần chạy mà cổng phải chặn / sửa lệnh ghi lỗi hãng (%) |
+| **Dữ liệu** (trường nào của trial, không có nhãn) | `events` (sự kiện `type = tool`, `tool = file_carrier_fault`, trường `carrier_id`; sự kiện `type = guard`, `kind` ∈ `fault_blocked`, `fault_strike_cap`, `fault_corrected`), `day`, `seed`. Không dùng nhãn đúng / sai |
+| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | Đếm số sự kiện ghi lỗi theo khoá (`day`, `seed`, `carrier_id`), lấy **max**; không có lỗi nào thì trả 0. Chỉ số kèm: số trial có ít nhất một sự kiện guard thuộc 3 loại trên chia cho tổng số trial (mẫu số tối thiểu 1). Trial không có `events` coi như không có sự kiện |
+| **Khung thời gian / ngưỡng báo động** | Tính theo từng ngày vận hành (ca 480 phút), cập nhật sau mỗi lệnh ghi. `max_auto_faults_per_carrier_day`: **vàng** = 2 (chạm trần `ops_limits`, lỗi tiếp theo chờ NV-HANH), **đỏ** > 2 (cổng đã thủng: tắt `file_carrier_fault`). `fault_gate_block_rate`: **vàng** > 10%, **đỏ** > 30% trong một ngày (dữ liệu tracking / chính sách đang lệch, NV-TUNG kiểm cờ `index_active` và `delay_cause`) |
+| **Điểm mù** (chỉ số này KHÔNG thấy gì) | Không thấy lỗi oan khi tracking sai mà vẫn dưới trần (2 lỗi đầu trong ngày); không thấy cửa sổ 7 ngày (ngưỡng đình chỉ `suspend_after_strikes_7d`); không thấy hoàn sai tiền cho khách |
+| Giá trị trên bộ nền · trên thẻ (đọc mục `monitor` của report) | Thẻ S3 (after, `R-S3-after-20261118-163721-ffb0c6`): `max_auto_faults_per_carrier_day = 2`, `fault_gate_block_rate = 0,333`. Bộ nền: xem report grade ở C0 (bước sau) |
 
 ---
 
