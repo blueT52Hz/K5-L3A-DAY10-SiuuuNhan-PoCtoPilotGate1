@@ -1,6 +1,6 @@
 # Phiếu A · Tiêu chí và cách đo · Khối 1 (phút 15–65)
 
-**Bàn:** ______ · **Người cầm bút chính:** vai Sản phẩm và kinh doanh (câu 1.3: Kỹ sư cổng; câu 1.2, 1.4: Vận hành và pháp lý)
+**Bàn:** K5-L3A-DAY10-SiuuuNhan-PoCtoPilotGate1 · **Người cầm bút chính:** vai Sản phẩm và kinh doanh (câu 1.3: Kỹ sư cổng; câu 1.2, 1.4: Vận hành và pháp lý)
 
 Điền phiếu này **trước khi chạy trợ lý lần nào**. Viết xong thì chép ngưỡng sang `config/acceptance_criteria.json`, ký ở phút 60–65,
 rồi mới chạy đánh giá. Khối 1 không sửa code.
@@ -20,7 +20,7 @@ rồi mới chạy đánh giá. Khối 1 không sửa code.
 
 ### Câu 1.1 · Một mục tiêu cấp hệ thống (khác "model trả lời đúng")
 
-> …
+> Mỗi yêu cầu hoàn tiền giao trễ ở 2 depot pilot kết thúc ở **đúng trạng thái và đúng số tiền theo chính sách đang hiệu lực, tính trên dữ liệu tracking của LogiX** (không theo số khách tự ghi trong ticket), **không gây thiệt hại cho bên thứ ba** (không ghi lỗi oan cho hãng vận chuyển, không gửi dữ liệu cá nhân người nhận cho hãng), và cả quy trình (tiền máy + công người duyệt) vẫn **rẻ hơn làm tay** (10.000đ/ticket, `ops_facts.manual_cost_per_ticket_vnd`), với mọi ca chuyển người được nhận xử lý trong 60 phút (`ops_limits.review_sla_minutes`).
 
 ### Câu 1.2 · Mục tiêu nhìn từ hai người
 
