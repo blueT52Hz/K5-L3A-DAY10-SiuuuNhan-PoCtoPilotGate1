@@ -268,7 +268,7 @@ Vì sao có thể sai: cả hai đều là thao tác **nhập tay** của ngư�
 
 <a id="c6"></a>
 
-## C6 · Câu 3.4 · Fault tree TRƯỚC khi sửa (mã lần chạy: `__________`)
+## C6 · Câu 3.4 · Fault tree TRƯỚC khi sửa (mã lần chạy: `R-S3-before-20261118-162827-212f32` (base) · `R-S3-prepared-20261118-162827-212f32` (prepared))
 
 **Khung tư duy.** Đi từ **tác hại** ngược về nguyên nhân, không đi từ lỗi mình tình cờ thấy. Mỗi tầng hỏi "điều gì phải xảy
 ra thì điều trên mới xảy ra", nối bằng **HOẶC** (một trong các nhánh là đủ) hoặc **VÀ** (phải đồng thời). Một biện pháp tốt
@@ -283,21 +283,28 @@ thường biến một nhánh HOẶC thành VÀ: tác hại chỉ còn xảy ra 
 Ít nhất hai nhánh ở hai tầng khác nhau (kỹ thuật, kinh doanh, con người); mỗi lá có bằng chứng (ticket@seed, trường dữ liệu, hoặc một dòng của report).
 
 ```
-[ĐỈNH] Tác hại: ______________________________ (cho ai: __________, đo bằng: __________)
+[ĐỈNH] Tác hại: MKD (và hãng khác) bị ghi lỗi oan, phạt 120.000đ / lỗi (cho ai: hãng vận chuyển, tài xế; đo bằng: wrongful_carrier_faults trên gói S3 = 35 ở base)
  └─ HOẶC
- ├─ [1] ______________________________ tầng: đầu vào / data / hành động / quyền hạn / vận hành / kinh doanh
- │ └─ vì: ________________________ bằng chứng: ticket ______@seed ____
- ├─ [2] ______________________________ tầng: ______
- │ └─ vì: ________________________ bằng chứng: ticket ______@seed ____
- └─ [3] ______________________________ tầng: ______
- └─ vì: ________________________ bằng chứng: ______
+ ├─ [1] Dùng chính sách sai phiên bản (REFUND-v3) sau ngày REFUND-v4 hiệu lực      tầng: data
+ │ └─ vì: agent đọc cờ index_active (bản sao, người bật tay) thay vì effective_from/to
+ │        bằng chứng: ticket S3-01@11 (base): policy REFUND-v3, pinned: false; cause FORCE_MAJEURE → file_carrier_fault MKD
+ ├─ [2] Ghi lỗi khi tracking chưa ghi nguyên nhân trễ                                 tầng: hành động
+ │ └─ vì: agent.py mặc định cause = CARRIER khi delay_cause trống; legal gate chưa bật ở base
+ │        bằng chứng: trường parcels[].delay_cause = null trong incidents/S3/world_patch.json; thẻ: "đơn tracking chưa ghi nguyên nhân cũng ghi lỗi"
+ └─ [3] Ghi quá 2 lỗi tự động / hãng / ngày, không ai xác nhận                        tầng: vận hành (con người)
+     └─ VÀ
+        ├─ [3a] ngày bão: nhiều kiện MKD trễ thật, cause CARRIER hợp lệ               bằng chứng: S3-40 … S3-43 cùng scenario, MKD
+        ├─ [3b] không có cổng đếm lỗi theo hãng / ngày (ops_limits.max_auto_strikes_per_carrier_per_day = 2 không được thi hành)
+        │                                                                                  bằng chứng: S3-42@11, S3-43@11 (prepared / after) vẫn ghi lỗi MKD; report prepared: lỗi oan còn 10, đều MKD
+        └─ [3c] không có người trực xác nhận lỗi thứ 3+ (NV-HANH chỉ nhận ca agent chuyển sang)  bằng chứng: tỉ lệ chuyển người prepared 0,0833; thẻ "không thấy ai bên LogiX xác nhận"
 ```
+*Nhánh phụ cùng gốc [1] (tác hại cho khách, không phải đỉnh này): hoàn thiếu 667.000đ, hoàn sai 900.000đ ở base (`S3-42@11` base: 22.000đ thay vì 47.400đ).*
 
 | Lá | Specification bị vi phạm (phần mềm phải làm gì) | Giả định môi trường đã sai (thế giới ngoài phần mềm) |
 |---|---|---|
-| [1] | | |
-| [2] | | |
-| [3] | | |
+| [1] | Chính sách dùng để quyết tiền và lỗi hãng phải là bản có `effective_from ≤ as_of ≤ effective_to` (spec câu 3.2 mục a) | "Người phụ trách bật cờ `index_active` đúng ngày đổi chính sách" |
+| [2] | Chỉ ghi lỗi khi `delay_cause` có ghi và thuộc `fault_causes` của bản hiệu lực (spec 3.2 mục b) | "Điều phối hãng / kho luôn ghi nguyên nhân trễ trước khi khách gửi yêu cầu" |
+| [3] | Không ghi tự động quá `max_auto_strikes_per_carrier_per_day` lỗi / hãng / ngày; lỗi thứ 3+ phải qua người duyệt (spec 3.2 mục c) | "Lỗi hãng là sự kiện lẻ, mỗi ngày mỗi hãng chỉ vài lỗi"; thực tế ngày bão một hãng trễ hàng loạt |
 
 **Ví dụ mẫu một nhánh (bộ nền, đừng chép):** đỉnh "hãng VNX nhận lỗi oan cho đơn O-1002" ← [1] agent dùng độ trễ 5 ngày ←
 model lấy số trong ticket đè lên DB (`T-002@55`). Spec bị vi phạm: độ trễ dùng để ghi lỗi phải lấy từ tracking DB. Giả định
