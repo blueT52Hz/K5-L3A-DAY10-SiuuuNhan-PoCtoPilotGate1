@@ -260,9 +260,9 @@ Kiểm bằng gì (hàm trong `guards.py`, dòng report nào): (a) `pre_guard` g
 
 ### Câu 3.3 · Một giả định về môi trường mà người thiết kế đã ngầm tin, nhưng nhiều khả năng sai ngoài thực tế
 
-Giả định (thứ nằm NGOÀI phần mềm): …
+Giả định (thứ nằm NGOÀI phần mềm): **"Ngày chính sách mới có hiệu lực, người phụ trách chỉ mục chính sách sẽ bật cờ `index_active` cho bản mới đúng ngày, và điều phối kho / hãng luôn ghi `delay_cause` cho kiện trễ trước khi khách gửi yêu cầu."**
 
-Vì sao có thể sai: …
+Vì sao có thể sai: cả hai đều là thao tác **nhập tay** của người không dùng trợ lý và không bị ai kiểm: đổi chính sách rơi vào 01/12, giữa đợt bão số 9 và cao điểm cuối năm, đúng lúc vận hành bận nhất nên việc bật cờ dễ bị quên hoặc trễ vài ngày (thẻ S3: phụ lục v4 đã ký mà trợ lý vẫn dùng v3); còn `delay_cause` do điều phối hãng nhập khi xử lý xong sự cố, nên ngày bão thường để trống hoặc ghi muộn, đúng lúc khách đã gửi yêu cầu (thẻ: "có đơn tracking còn chưa ghi nguyên nhân trễ"). Thêm: giả định "mỗi lỗi hợp lệ thì ghi ngay" bỏ qua việc trong một ngày bão một hãng có thể trễ hàng loạt, và Ops đã chủ ý đặt trần 2 lỗi tự động / hãng / ngày cho tình huống đó.
 
 ---
 
