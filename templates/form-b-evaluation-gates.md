@@ -289,8 +289,8 @@ python3 -m unittest discover -s tests
 Bàn đang chỉnh cổng tới khi 22 ticket bộ nền xanh hết. Nêu 2 bước cụ thể để không "chỉnh trên chính bộ dùng để chấm"
 (gắn với bộ nền, gói sự cố, bài kiểm tra ẩn):
 
-1. …
-2. …
+1. **Viết cổng theo luật nghiệp vụ, không theo ca hỏng:** mỗi cổng chỉ so lệnh ghi với nguồn sự thật (tracking, chính sách theo ngày hiệu lực, phê duyệt, sổ cái) qua `lab10/helpers.py`, không bao giờ rẽ nhánh theo `ticket_id`, `order_id`, tên khách hay câu chữ cụ thể (ví dụ không viết `if ticket_id == "T-002"` hay bắt chuỗi "trễ 5 ngày"). Bộ nền chỉ dùng để kiểm "không làm hỏng ca đang đúng"; bài kiểm tra ẩn dùng đơn khác, khách khác, cách viết khác nên cổng bám theo câu chữ sẽ trượt.
+2. **Giữ một bộ kiểm tra tách khỏi bộ đã dùng để chỉnh:** ngoài 22 ticket nền, mỗi cổng được thử bằng ticket ad-hoc tự viết (câu 2.8) trên đơn và khách **khác** đơn đã thấy hỏng (O-1021 / C-05, O-1026 / C-10, không dùng lại O-1002 của `T-002`). Ở vòng 2, chạy lệnh 6 `lab10.grade --incident Sx` ngay khi nhận thẻ, **trước khi sửa**, để mốc `prepared` đo đúng cổng vòng 1 trên gói sự cố chưa từng nhìn thấy; mọi lần chạy đều ghi vào `runs/journal.jsonl` nên team chấm thấy được bàn đã chỉnh trên bộ nào, bao nhiêu lần.
 
 ### B7.3 · Câu 2.8 · Một behavioral test
 
