@@ -446,7 +446,7 @@ Cột v1 nằm ở Phiếu B mục B8; không sửa cột đó.
 
 | | **v2** (phút 185–200, SAU sự cố) |
 |---|---|
-| Commit ký tiêu chí | `9f117f6` (`b10: Sign acceptance criteria`), giống v1; hash tiêu chí `dfd90ea3` KHÔNG ĐỔI |
+| Commit ký tiêu chí | `7521b47` (`Sign acceptance criteria`, 15:27:25), cùng commit với v1 (ở v1 ghi `9f117f6`, hash cũ trước khi đổi message); hash tiêu chí `dfd90ea3` KHÔNG ĐỔI |
 | Hash chốt cổng vòng 1 | `b0d285cb`, giống v1, còn nguyên |
 | Mã lần chạy dùng làm bằng chứng | thẻ, mốc base: `R-S3-before-20261118-163827-ffb0c6` · prepared: `R-S3-prepared-20261118-163827-ffb0c6` · after: `R-S3-after-20261118-163827-ffb0c6` (grade `R-S3-grade-20261118-163826-ffb0c6`) |
 | Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | Không. After trên S3: 0 ca ùn, chờ lâu nhất 0 phút, chi phí 4.405đ / ticket, ROI 1,27, tổng hoàn ngày 109.400đ / trần 1.500.000đ, 0 lộ dữ liệu cá nhân, 0 lỗi oan. Bộ nền: 4.456đ, ROI 1,24, không vượt trần |

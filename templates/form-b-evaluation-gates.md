@@ -218,7 +218,7 @@ Trạng thái: **Xong** (có bằng chứng) · **Chưa** · **Không áp dụng
 | 6 | Chi phí | Khối "kinh doanh và vận hành" của report: chi phí mỗi ticket so với làm tay, ROI, tiền LLM ticket đắt nhất; `config/operating_gates.json` mục `business` | Chi phí ≤ 8.000đ, ROI ≥ 0,25, có trần hoàn ngày và ngân sách mỗi ticket | **Chưa** | Base: 4.203đ/ticket, ROI 1,34, ticket đắt nhất 670đ (trần 1.500đ) đạt; nhưng `business` trong config còn `null` (trần ngày chưa đặt) | Nguyễn Ngọc Hiếu |
 | 7 | Vận hành | Runbook (Phiếu B mục B7.5–B7.6) + `config/operating_gates.json` mục `operations` (PIC, người duyệt, số người trực, điều kiện dừng, kênh báo tin) + metric trong `monitors.py` | Có PIC, người duyệt, điều kiện dừng, kênh báo tin, runbook khớp số | **Chưa** | `operations.pic` còn trống; runbook chưa viết (bước 21); `monitors.py` chỉ có `escalation_rate` | Nguyễn Hoa Thanh Tùng |
 | 8 | Con người, pháp lý | Bên thứ ba (hãng, tài xế, shop, người nhận quà, người đứng tên duyệt); `config/operating_gates.json` mục `legal`; thẻ S6, S7, S8 có mục riêng ở Phiếu C mục C3 | Không gửi dữ liệu cá nhân cho hãng; chỉ ghi lỗi hãng khi tracking có nguyên nhân | **Chưa** | Base `pii_leaks = 0` nhưng `customer_note` vẫn gửi hãng (B2 lỗi 2); `legal` trong config còn trống / `false` | Nguyễn Hoa Thanh Tùng |
-| 9 | Quyết định | Câu tiêu chí (Phiếu A mục A4) + hash Bản tiêu chí đã ký + quyết định Gate 1 (Phiếu B mục B8, Phiếu C mục C12) | Tiêu chí đã ký trước lần eval đầu; quyết định khớp bằng chứng | Xong một phần | Đã ký 2026-11-18T15:27:07, hash `dfd90ea3`, commit `9f117f6` trước run base 15:28; quyết định v1 chưa có (bước 23) | Nguyễn Ngọc Hiếu |
+| 9 | Quyết định | Câu tiêu chí (Phiếu A mục A4) + hash Bản tiêu chí đã ký + quyết định Gate 1 (Phiếu B mục B8, Phiếu C mục C12) | Tiêu chí đã ký trước lần eval đầu; quyết định khớp bằng chứng | Xong một phần | Đã ký 2026-11-18T15:27:07, hash `dfd90ea3`, commit `7521b47` (hash cũ `9f117f6`) trước run base 15:28; quyết định v1 chưa có (bước 23) | Nguyễn Ngọc Hiếu |
 
 Ô "Chưa" có rủi ro cao → chuyển thành một dòng Risk register (Phiếu C mục C10).
 
@@ -397,7 +397,7 @@ bao nhiêu thời gian? (3) Có phần nào của dự án không nên làm ti�
 
 | | **v1** (phút 105–115, TRƯỚC khi nhận thẻ sự cố) |
 |---|---|
-| Commit ký tiêu chí (message `Sign acceptance criteria`; hash commit, tuỳ chọn) | `9f117f6` (`b10: Sign acceptance criteria`, 15:27, trước run base đầu tiên 15:28) |
+| Commit ký tiêu chí (message `Sign acceptance criteria`; hash commit, tuỳ chọn) | `9f117f6` (`b10: Sign acceptance criteria`, 15:27, trước run base đầu tiên 15:28) · *ghi chú sau v1: message đã đổi thành đúng `Sign acceptance criteria`, hash mới `7521b47`, nội dung và giờ commit giữ nguyên* |
 | Hash chốt cổng vòng 1 (8 ký tự lệnh `lab10.checkpoint` in ra, tuỳ chọn) | `b0d285cb` |
 | Mã lần chạy dùng làm bằng chứng | bộ nền, mốc base: `R-base-before-20261118-152805-bde05c` · bộ nền với cổng vòng 1 (prepared): `R-base-prepared-20261118-154208-212f32` |
 | Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | Không (`vượt trần: không` ở cả run base và run prepared) |
