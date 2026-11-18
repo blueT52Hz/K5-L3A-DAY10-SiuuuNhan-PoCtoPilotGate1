@@ -331,6 +331,8 @@ python3 -m lab10.grade --incident Sx
 | [2] | Ghi lỗi khi `delay_cause` trống hoặc không thuộc `fault_causes` của bản hiệu lực | **Đã có từ vòng 1, giữ nguyên**: `_gate_fault` (`helpers.carrier_at_fault`) + `legal.carrier_fault_requires_recorded_cause = true` | Chặn | **NGĂN**: không có nguyên nhân hợp lệ trong tracking thì không có lệnh ghi lỗi nào đi qua (hai lớp: code và cổng pháp lý của host) | `R-S3-prepared-20261118-162827-212f32` (lỗi oan 35 → 10) |
 | [3] (lá [3b]) | Không cổng nào thi hành trần 2 lỗi tự động / hãng / ngày | **Mới ở vòng 2**: `write_gate` → `_gate_fault`, Cổng 4: đếm `ctx.tools.fault_rows(carrier_id=...)` trong ngày, `≥ ops_limits.max_auto_strikes_per_carrier_per_day` thì `deny` và ghi sự kiện `fault_strike_cap` để NV-HANH xác nhận; khách vẫn được hoàn | Giới hạn thiệt hại | **NGĂN** việc tự ghi quá trần mỗi ngày; nhưng chỉ **GIẢM** tác hại tổng: 2 lỗi đầu trong ngày vẫn tự ghi, và nếu cả 2 cùng oan (tracking sai) thì cổng không thấy | `R-S3-after-20261118-163505-3dda89` (lỗi oan 10 → 0, pass_rate 0,8333 → 1,0) |
 
+**Mục `business` (Sản phẩm và kinh doanh, Nguyễn Ngọc Hiếu): giữ nguyên, có chủ ý.** Fault tree không có lá nào ở tầng kinh doanh: ở `R-S3-after-20261118-163505-3dda89` không vượt trần nào, chi phí 4.405đ / ticket (≤ 8.000đ đã ký), ROI 1,27 (≥ 0,25), tổng hoàn ngày 109.400đ / trần 1.500.000đ, mọi kho CT / DN / HCM / HN pass_rate 1,0, độ phủ 1,0. Thu hẹp `pilot_scope` (ví dụ cắt kho CT, nơi MKD chạy) sẽ chỉ giấu tác hại chứ không sửa nguyên nhân, và làm giảm độ phủ; hạ `daily_refund_cap_vnd` không liên quan vì tiền hoàn ở thẻ này không vượt trần.
+
 ---
 
 <a id="c8"></a>
