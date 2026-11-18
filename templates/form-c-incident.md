@@ -333,6 +333,8 @@ python3 -m lab10.grade --incident Sx
 
 **Mục `business` (Sản phẩm và kinh doanh, Nguyễn Ngọc Hiếu): giữ nguyên, có chủ ý.** Fault tree không có lá nào ở tầng kinh doanh: ở `R-S3-after-20261118-163505-3dda89` không vượt trần nào, chi phí 4.405đ / ticket (≤ 8.000đ đã ký), ROI 1,27 (≥ 0,25), tổng hoàn ngày 109.400đ / trần 1.500.000đ, mọi kho CT / DN / HCM / HN pass_rate 1,0, độ phủ 1,0. Thu hẹp `pilot_scope` (ví dụ cắt kho CT, nơi MKD chạy) sẽ chỉ giấu tác hại chứ không sửa nguyên nhân, và làm giảm độ phủ; hạ `daily_refund_cap_vnd` không liên quan vì tiền hoàn ở thẻ này không vượt trần.
 
+**Mục `operations` / `legal` (Vận hành và pháp lý, Nguyễn Hoa Thanh Tùng): thêm 2 điều kiện dừng, giữ nguyên số người trực.** Lá [3c] (không ai xác nhận lỗi thứ 3+) là nguyên nhân ở tầng con người: thêm vào `operations.stop_conditions` (a) "hãng đã có 2 lỗi tự động trong ngày thì lỗi tiếp theo không tự ghi; NV-HANH xác nhận cuối ca rồi mới ghi tay, NV-OANH báo hãng" (quy trình đi kèm Cổng 4) và (b) "ngày chạy không khớp chính sách hiệu lực hoặc cờ `index_active` khác bản hiệu lực thì NV-TUNG tắt `file_carrier_fault` tới khi pháp chế xác nhận" (cho lá [1]). Tầng: **vận hành**; **GIẢM** khả năng (dựa vào người làm đúng quy trình). Không tăng `reviewers_on_shift`: hàng chờ S3 chỉ 2 ca / ngày, chờ lâu nhất 0 phút, thêm người chỉ làm tăng chi phí 1.364đ / ticket. `legal.carrier_fault_requires_recorded_cause = true` đã bật từ vòng 1, giữ nguyên.
+
 ---
 
 <a id="c8"></a>
