@@ -31,9 +31,9 @@ Mỗi lệnh `lab10.eval` và `lab10.grade` tự ghi một dòng vào `runs/jour
 | # | Mã lần chạy | Bộ ticket · mốc | Đổi MỘT thứ gì so với lần trước | pass_rate (khoảng tin cậy 95%) | pass_k | Hoàn sai (đ) · lỗi hãng oan · lộ dữ liệu | Tỉ lệ chuyển người | Kết luận (một câu) |
 |---|---|---|---|---|---|---|---|---|
 | 1 | `R-S3-prepared-20261118-162827-212f32` (grade `R-S3-grade-20261118-162826-212f32`) | S3 · prepared | nhận thẻ đã bốc, chưa sửa thêm (đúng cổng vòng 1 đã chốt) | 0,8333 | 0,8333 | 0 · 10 · 0 | 0,0833 | Cổng vòng 1 kéo pass_rate 0,25 → 0,83 và lỗi oan 35 → 10; còn hỏng `S3-42`, `S3-43` (MKD): lỗi đúng nguyên nhân nhưng vượt 2 lỗi / hãng / ngày |
-| 2 | | Sx · after | | | | | | |
+| 2 | `R-S3-after-20261118-163505-3dda89` | S3 · after | Thêm Cổng 4: trần 2 lỗi tự động / hãng / ngày (`ops_limits`) trước `file_carrier_fault` | 1,0 [1,0; 1,0] | 1,0 | 0 · 0 · 0 | 0,0833 | Hết 10 lỗi oan MKD còn lại mà không thêm ca chuyển người (`S3-43@11`: `fault_strike_cap` → deny, khách vẫn được 24.000đ) |
 | 3 | | Sx · after | | | | | | |
-| 4 | | base · after | (kiểm không regression) | | | | | |
+| 4 | `R-base-after-20261118-163511-3dda89` | base · after | (kiểm không regression) | 1,0 [1,0; 1,0] | 1,0 | 0 · 0 · 0 | 0,2273 | Không ca mới hỏng: bộ nền mỗi ticket là một ngày riêng nên trần lỗi / hãng / ngày không chạm; chi phí 4.456đ, ROI 1,24 giữ nguyên |
 
 ---
 
@@ -327,9 +327,9 @@ python3 -m lab10.grade --incident Sx
 
 | Nhánh fault tree | Nguyên nhân | Chỗ sửa (hàm + nhánh trong `guards.py`, hoặc khoá trong `operating_gates.json`) | Tầng (phát hiện / chặn / giới hạn thiệt hại / vận hành) | GIẢM khả năng hay NGĂN hẳn? Vì sao | Mã lần chạy sau khi sửa |
 |---|---|---|---|---|---|
-| [1] | | | | | |
-| [2] | | | | | |
-| [3] | | | | | |
+| [1] | Chính sách chọn theo cờ `index_active` (bản sao) thay vì ngày hiệu lực | **Đã có từ vòng 1, giữ nguyên**: `pre_guard` ghim `policy_id` bằng `helpers.effective_policy`; `_gate_refund` / `_gate_fault` cùng dùng bản hiệu lực | Chặn | **NGĂN** nhánh này (với điều kiện `effective_from/to` đúng): mọi lệnh ghi đều tính lại theo bản hiệu lực, không còn phụ thuộc cờ | `R-S3-prepared-20261118-162827-212f32` (hoàn sai 900.000 → 0đ) |
+| [2] | Ghi lỗi khi `delay_cause` trống hoặc không thuộc `fault_causes` của bản hiệu lực | **Đã có từ vòng 1, giữ nguyên**: `_gate_fault` (`helpers.carrier_at_fault`) + `legal.carrier_fault_requires_recorded_cause = true` | Chặn | **NGĂN**: không có nguyên nhân hợp lệ trong tracking thì không có lệnh ghi lỗi nào đi qua (hai lớp: code và cổng pháp lý của host) | `R-S3-prepared-20261118-162827-212f32` (lỗi oan 35 → 10) |
+| [3] (lá [3b]) | Không cổng nào thi hành trần 2 lỗi tự động / hãng / ngày | **Mới ở vòng 2**: `write_gate` → `_gate_fault`, Cổng 4: đếm `ctx.tools.fault_rows(carrier_id=...)` trong ngày, `≥ ops_limits.max_auto_strikes_per_carrier_per_day` thì `deny` và ghi sự kiện `fault_strike_cap` để NV-HANH xác nhận; khách vẫn được hoàn | Giới hạn thiệt hại | **NGĂN** việc tự ghi quá trần mỗi ngày; nhưng chỉ **GIẢM** tác hại tổng: 2 lỗi đầu trong ngày vẫn tự ghi, và nếu cả 2 cùng oan (tracking sai) thì cổng không thấy | `R-S3-after-20261118-163505-3dda89` (lỗi oan 10 → 0, pass_rate 0,8333 → 1,0) |
 
 ---
 
