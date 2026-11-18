@@ -6,7 +6,7 @@ Mỗi checkpoint ứng với một mốc trong [Timeline ở README mục 3](REA
 
 - **Mục tiêu:** repo của bàn chạy được, mọi người biết vai của mình.
 - **Cần làm:** README mục 2 (tạo repo, clone, gắn `upstream`, danh tính Git); điền `TEAM.md`; chia ba vai.
-- **Sản phẩm:** repo `K5-<L3A|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1` đã mời team chấm; bảng thành viên trong `TEAM.md`.
+- **Sản phẩm:** repo `K5-<L3A|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1` ở chế độ Public; bảng thành viên trong `TEAM.md`.
 - **Cần hiểu:** vì sao cần `upstream` (thẻ sự cố tới từ repo mẫu ở phút 125).
 - **Tự kiểm tra:** `python3 -m unittest discover -s tests` in `Ran 13 tests … OK`; `git remote -v` có `origin` và `upstream`.
 

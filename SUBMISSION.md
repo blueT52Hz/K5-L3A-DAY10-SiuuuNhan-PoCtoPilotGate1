@@ -2,7 +2,7 @@
 
 ## Loại bài
 
-**Nhóm** (một bàn 4–5 người). Một repo cho cả bàn, do trưởng nhóm tạo, kèm [`TEAM.md`](TEAM.md) điền đầy đủ.
+**Nhóm** (một bàn 3–4 người). Một repo cho cả bàn, do trưởng nhóm tạo, kèm [`TEAM.md`](TEAM.md) điền đầy đủ.
 
 ## Đặt tên repo
 
@@ -28,7 +28,7 @@ Bài nộp là thư mục `submission/` do lệnh 7 gom, cùng với `TEAM.md`. 
 
 ## Nơi nộp
 
-1. Trưởng nhóm đẩy bài lên repo của bàn (README mục 6) và mời tài khoản team chấm quyền **Read** (README mục 2, bước 1).
+1. Trưởng nhóm đẩy bài lên repo **Public** của bàn (README mục 6). Bàn không cần mời team chấm.
 2. **Mỗi thành viên tự nộp link repo của bàn trên LMS bằng tài khoản cá nhân**, kể cả khi trưởng nhóm đã gửi link cho Lab Coach. Ai không nộp link trên LMS thì không có bài.
 
 ## Deadline (GMT+7)
@@ -43,7 +43,7 @@ Commit sau hạn chót không được tính; team chấm lấy commit cuối c�
 
 ## Checklist
 
-- [ ] Repo của bàn đúng tên `K5-<L3A|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1`, đã mời team chấm.
+- [ ] Repo của bàn đúng tên `K5-<L3A|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1` và ở chế độ **Public**.
 - [ ] `TEAM.md` có đủ họ tên, MSSV, vai của mọi thành viên và mục `## HoVaTen-MSSV` của từng người.
 - [ ] Tiêu chí đã ký, commit và push **trước** lần đánh giá đầu tiên.
 - [ ] Đã chốt cổng vòng 1 (lệnh 5) trước phút 115.

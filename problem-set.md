@@ -32,12 +32,12 @@ Demo cuối buổi so sánh ba mốc **base · prepared · after**: cổng bàn 
 | Demo ba mốc | 200–230 | 30' | |
 | Tổng kết, đẩy bài lần cuối | 230–240 | 10' | |
 
-## Ba vai trong bàn (4–5 người; vai nào cũng có việc ở cả hai vòng)
+## Ba vai trong bàn (3–4 người; vai nào cũng có việc ở cả hai vòng)
 
 | Vai | Cầm bút ở vòng 1 | Cầm bút ở vòng 2 | File chính |
 |---|---|---|---|
 | **Kỹ sư cổng** (1–2 người) | Chạy mốc base, dò trace, behavioral test, code 2–3 cổng phòng ngừa | Dò trace sự cố, sửa cổng, thêm chỉ số theo dõi, chạy ba mốc | `lab10/guards.py`, `lab10/monitors.py` |
-| **Sản phẩm và kinh doanh** (1–2 người) | Mục tiêu, thước đo, bản đồ dữ liệu, lăng kính kinh doanh của pre-mortem, cổng `business`, tiêu chí để ký | Đọc chi phí mỗi ticket, ROI, trần tiền; quyết định phạm vi pilot; viết quyết định v2 | `config/acceptance_criteria.json`, `config/operating_gates.json` mục `business`, Phiếu A, Phiếu B mục B8, Phiếu C mục C12 |
+| **Sản phẩm và kinh doanh** (1 người) | Mục tiêu, thước đo, bản đồ dữ liệu, lăng kính kinh doanh của pre-mortem, cổng `business`, tiêu chí để ký | Đọc chi phí mỗi ticket, ROI, trần tiền; quyết định phạm vi pilot; viết quyết định v2 | `config/acceptance_criteria.json`, `config/operating_gates.json` mục `business`, Phiếu A, Phiếu B mục B8, Phiếu C mục C12 |
 | **Vận hành và pháp lý** (1 người) | HAZOP mở rộng, checklist 9 nhóm việc có PIC, cổng `operations` và `legal`, runbook phần 1–3 và giờ cao điểm | Đọc hàng chờ người duyệt, số người trực, bên thứ ba bị ảnh hưởng; runbook phần 4–5; gom bài nộp | `config/operating_gates.json` mục `operations` và `legal`, Phiếu B mục B4–B5 và B7.5–B7.6, Phiếu C mục C11, `submission/` |
 
 Mọi quyết định (v1, v2) do cả bàn chốt. Người không viết code vẫn đọc trace cùng Kỹ sư cổng và chỉ ra ticket nào còn hỏng.
