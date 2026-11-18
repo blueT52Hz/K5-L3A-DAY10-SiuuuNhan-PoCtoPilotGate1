@@ -71,9 +71,9 @@ nhau chia cho số lần chạy có sự kiện `proposal`; lần chạy không 
 
 ### Câu 1.5 · Chọn MỘT kết luận và giải thích một câu
 
-Số minh hoạ trong đề (không phải số của bàn). Khoanh: **(a) · (b) · (c) · (d)**
+Số minh hoạ trong đề (không phải số của bàn). Khoanh: (a) · **[(b)]** · (c) · (d) → chọn **(b)**
 
-Giải thích một câu: …
+Giải thích một câu: Y có 1,0 (50/50) nằm trong khoảng tin cậy 95% [0,9400; 1,0] của X, tức chênh nhau đúng 1 lần chạy trên 50, mức chênh mà nhiễu lấy mẫu với 50 lần chạy hoàn toàn có thể tạo ra, nên chưa đủ căn cứ nói Y tốt hơn X. (a) sai vì không có ý nghĩa thống kê; (c) sai vì "chưa khác biệt có ý nghĩa" không có nghĩa là "chắc chắn như nhau"; (d) sai vì 0,98 đạt hay không phụ thuộc ngưỡng đã ký, không phải số seed.
 
 ---
 
