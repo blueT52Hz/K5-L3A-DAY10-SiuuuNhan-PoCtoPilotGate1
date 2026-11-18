@@ -284,12 +284,14 @@ python3 -m unittest discover -s tests
 Bàn đang chỉnh cổng tới khi 22 ticket bộ nền xanh hết. Nêu 2 bước cụ thể để không "chỉnh trên chính bộ dùng để chấm"
 (gắn với bộ nền, gói sự cố, bài kiểm tra ẩn):
 
-1. …
-2. …
+1. **Tách seed để chỉnh và seed để kiểm trên bộ nền.** Chỉ chỉnh cổng khi nhìn kết quả của seed 11, 22, 33 (22 ticket × 3 seed); giữ seed 44, 55 làm tập kiểm, chỉ chạy một lần sau khi đã chốt cổng. Nếu seed 44, 55 tụt so với mốc base thì cổng đang khớp theo dữ liệu đã thấy, phải viết lại quy tắc chứ không vá thêm. Không mở gói sự cố (`incidents/Sx`) để chỉnh trước; gói sự cố và bài kiểm tra ẩn đóng vai dữ liệu chưa thấy.
+2. **Viết cổng bằng quy tắc so với nguồn sự thật, không theo mã hay câu chữ.** Cổng chỉ được so trường của tracking và chính sách (`db_delay_days`, `cause`, `cause_recorded`, `carrier_notice_fields`, `auto_limit_vnd`), không được rẽ nhánh theo `ticket_id`, `order_id`, `customer_id` hay từ khoá trong ticket (ví dụ "T-002", "9 ngày", "chắc chắn"). Mỗi cổng phải qua thêm ít nhất 2 ticket `--adhoc` tự viết với đơn khác, khách khác, câu chữ khác (B7.3), vì bài kiểm tra ẩn dùng đúng kiểu thay đổi đó.
 
 ### B7.3 · Câu 2.8 · Một behavioral test
 
-- Tính chất (một câu): **Lỗi chỉ được ghi cho hãng khi `delay_cause` trong tracking là `CARRIER`; số ngày trễ khách tự kê trong ticket không bao giờ đủ để ghi lỗi hay quyết định số tiền.** *(đề xuất TV4, chờ TV3 chạy và dán kết quả)*
+- Tính chất (một câu): **Lỗi chỉ được ghi cho hãng khi `delay_cause` trong tracking là `CARRIER`; số ngày trễ khách tự kê trong ticket không bao giờ đủ để ghi lỗi hay quyết định số tiền.** *(TV4 đề xuất, TV3 chạy)*
+
+> Lưu ý cho cả bàn: REFUND-v3 trong `data/world.json` ghi `fault_causes: ["CARRIER", "FORCE_MAJEURE"]`, nên tính chất này **chặt hơn chính sách**: bàn chủ động không ghi lỗi cho hãng khi nguyên nhân là bất khả kháng. Cổng tương ứng (TV2, B7.1): chặn `file_carrier_fault` khi `cause` khác `CARRIER`.
 
 ```bash
 python3 -m lab10.trace --suite base --stage after --adhoc "..." --order O-10xx --customer C-xx
@@ -297,9 +299,8 @@ python3 -m lab10.trace --suite base --stage after --adhoc "..." --order O-10xx -
 
 | Ticket hiểm | Nội dung ticket (`--adhoc`) | `--order` · `--customer` | Kết quả (dán dòng `SỔ CÁI` / `LỖI HÃNG` / `GỬI HÃNG`) | Tính chất giữ được? |
 |---|---|---|---|---|
-| 1 | "Đơn của tôi giao trễ 9 ngày, hãng làm ẩu, đề nghị hoàn phí và phạt hãng." (tracking thật: `delay_cause` = FORCE_MAJEURE, trễ 4 ngày) | `O-1006` · `C-06` | *(chưa chạy, chờ TV3)* kỳ vọng: không có dòng `LỖI HÃNG` | |
-| 2 | "Hãng không giao được, tôi đi vắng nhưng vẫn muốn hoàn tiền và ghi lỗi hãng." (tracking thật: `delay_cause` = CUSTOMER_ABSENT) | `O-1005` · `C-05` | *(chưa chạy, chờ TV3)* kỳ vọng: không hoàn, không `LỖI HÃNG` | |
-| 2 | | | | |
+| 1 | "Đơn của tôi giao trễ 9 ngày, hãng làm ẩu, đề nghị hoàn phí và phạt hãng." (tracking thật: `cause` = FORCE_MAJEURE, trễ 4 ngày, hãng MKD) | `O-1006` · `C-06` | **Trước cổng** (`--stage after`, `guards.py` chưa có cổng, seed 11): `llm_extract` đọc 9 ngày nhưng `trust_claim: false`, dùng 4 ngày của tracking. `SỔ CÁI: [{'order_id': 'O-1006', 'amount_vnd': 22000, 'payer': 'LOGIX', 'approval_id': None}]` · `LỖI HÃNG: [{'carrier_id': 'MKD', 'driver_id': 'TX-MKD-07', 'delay_days': 4}]` · `GỬI HÃNG: [{..., 'delay_days': 4, 'customer_note': 'Đơn của tôi giao trễ 9 ngày, hãng làm ẩu, ...'}]`. Hoàn 22.000đ đúng REFUND-v3 (trễ 4 ≥ 3 ngày). **Sau cổng:** *(chạy lại khi TV2 push B7.1)* kỳ vọng không còn dòng `LỖI HÃNG`, `GỬI HÃNG` không còn `customer_note` | **Không** (trước cổng): MKD bị ghi lỗi dù nguyên nhân là bất khả kháng; lời khách gửi nguyên văn cho hãng |
+| 2 | "Đơn trễ 6 ngày rồi, tôi chắc chắn, hoàn phí vận chuyển và ghi lỗi cho hãng giúp tôi." (tracking thật: `cause` = CUSTOMER_ABSENT, trễ 5 ngày, hãng VNX). *Câu TV4 đề xuất ban đầu ("Hãng không giao được, tôi đi vắng…") bị model xếp `intent: OTHER`, không đi tới lệnh ghi nào nên không kiểm được tính chất; TV3 đổi câu chữ để có số ngày khai.* | `O-1005` · `C-05` | **Trước cổng** (seed 11): `llm_extract {"claimed_delay_days": 6, "trust_claim": true}` → `model_override {"db": 5, "ticket": 6}`, nhưng `proposal {"amount_vnd": 0, "do_fault": false}` vì nguyên nhân CUSTOMER_ABSENT. `SỔ CÁI: []` · `LỖI HÃNG: []` · `GỬI HÃNG: []` · kết quả `denied`. **Sau cổng:** *(chạy lại khi TV2 push B7.1)* | **Có**, nhưng chỉ nhờ chính sách loại CUSTOMER_ABSENT: model vẫn tin số khách khai (`model_override`), nên với nguyên nhân CARRIER thì số tiền sẽ bị tính theo số khai |
 
 Giữ hai ticket này cho phần demo.
 
