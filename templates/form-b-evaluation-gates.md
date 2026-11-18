@@ -120,24 +120,24 @@ Gợi ý: mở `data/world.json` phần `policies`, `orders[].parcels`, `ops_lim
 
 | Mục | Điền cho trợ lý hoàn tiền |
 |---|---|
-| Người dùng | |
-| Việc người dùng cần làm xong | |
-| Đầu ra của hệ thống (kể cả các lệnh ghi) | |
-| Dữ liệu trợ lý đọc lúc chạy (bảng nào trong `data/world.json`) | |
-| Trường then chốt quyết định tiền và lỗi hãng | |
-| Với mỗi trường then chốt: **nguồn sự thật** hay **bản sao** (ai cập nhật, khi nào)? | |
-| Định dạng cần để ý (ngày, trường được phép trống, đơn nhiều kiện) | |
-| Thế giới thật làm dữ liệu lệch ở đâu (theo mùa, đổi chính sách, giờ cao điểm, người nhập tay)? | |
-| Câu người ngoài sẽ hỏi về nguồn dữ liệu ("sao hệ thống biết đơn trễ mấy ngày?") | |
+| Người dùng | Khách hàng (người đặt và người nhận) gửi ticket qua app; chị Hạnh (NV-HANH, trưởng ca CSKH) duyệt ca vượt hạn mức; chị Oanh (NV-OANH, kế toán) đối soát sổ với hãng và shop; anh Tùng (NV-TUNG) giữ công tắc tắt. |
+| Việc người dùng cần làm xong | Khách: được hoàn phí/tiền đúng và nhanh khi giao trễ. Chị Hạnh: chỉ phải duyệt những ca thật sự cần người. Chị Oanh: sổ cái khớp với phạt hãng mỗi tuần. |
+| Đầu ra của hệ thống (kể cả các lệnh ghi) | Câu trả lời cho khách; **ghi sổ cái** (hoàn tiền, `payer`, `approval_id`); **ghi lỗi (strike) cho hãng** (phạt 80.000–150.000đ/lỗi); **gửi thông báo cho hãng** (bên thứ ba); chuyển ca cho người duyệt. Ba lệnh ghi đầu không đảo ngược dễ. |
+| Dữ liệu trợ lý đọc lúc chạy (bảng nào trong `data/world.json`) | `orders` (kèm `parcels[]`), `policies`, `approvals`, `ledger_seed`, `carriers`, `customers`; giới hạn ở `ops_limits`, chi phí ở `ops_facts`. Chữ trong ticket (`data/tickets.jsonl`) chỉ là lời khách kể. |
+| Trường then chốt quyết định tiền và lỗi hãng | `parcels[].promised_date` và `delivered_date` (số ngày trễ) · `parcels[].delay_cause` (CARRIER / FORCE_MAJEURE / CUSTOMER_ABSENT / MERCHANT_HANDOVER / trống) · `policies[].effective_from`, `late.min_days_fee`, `auto_limit_vnd`, `fault_causes` · `approvals[].status`, `expires_at`, `max_vnd` · `goods_value_vnd`, `shipping_fee_vnd`. |
+| Với mỗi trường then chốt: **nguồn sự thật** hay **bản sao** (ai cập nhật, khi nào)? | **Nguồn sự thật:** `delivered_date`, `delay_cause` (máy quét/tracking của hãng), `policies` (Finance/Ops, theo `effective_from`), `approvals` (chị Hạnh cấp, có hạn). **Bản sao/lời kể:** số ngày trễ khách viết trong ticket; `ledger_seed` là bản ghi cũ, có dòng `approval_id: null`. |
+| Định dạng cần để ý (ngày, trường được phép trống, đơn nhiều kiện) | Ngày dạng `YYYY-MM-DD`; `delivered_date` và `delay_cause` **được phép trống** (5/26 kiện chưa có nguyên nhân, 2 kiện còn `IN_TRANSIT`); có đơn **nhiều kiện** (1/25 đơn có 2 kiện, mỗi kiện một hãng/ngày giao); đơn quà tặng (`is_gift`: O-1024, O-1026) người nhận khác người đặt; kho sỉ HCM-B2B từ 2 triệu/đơn. |
+| Thế giới thật làm dữ liệu lệch ở đâu (theo mùa, đổi chính sách, giờ cao điểm, người nhập tay)? | **Đổi chính sách:** REFUND-v4 hiệu lực 01/12/2026. **Mùa/thiên tai:** bão lũ làm nhiều ca `FORCE_MAJEURE`. **Người nhập tay:** điểm phát quét sót rồi nhập bù `delivered_date`. **Giờ cao điểm:** dịp khuyến mãi và cuối năm (giả định của bàn, chưa có số trong data), số ticket tăng, 1 người duyệt chỉ xử lý 6 ca/giờ. **Phê duyệt hết hạn** (`expires_at`) mà vẫn bị dùng. |
+| Câu người ngoài sẽ hỏi về nguồn dữ liệu ("sao hệ thống biết đơn trễ mấy ngày?") | "Số ngày trễ lấy từ `delivered_date` trừ `promised_date` trong tracking của hãng, không lấy từ lời khách. Nếu tracking trống hoặc chưa giao thì chuyển người duyệt, không tự quyết." |
 
 **Tóm lại (điền vào chỗ trống):**
-Trợ lý dùng `__________`, `__________`, `__________` để giúp `__________` làm được `__________`.
-Trường mà nếu sai thì tiền hoặc lỗi hãng sai theo: `__________`, `__________`.
-Chúng tôi biết thế giới thật sẽ làm dữ liệu lệch ở: `__________`. Dấu hiệu nhìn thấy sớm nhất: `__________`.
+Trợ lý dùng `tracking (parcels)`, `chính sách hoàn tiền (policies)`, `phê duyệt (approvals)` để giúp `khách và chị Hạnh` làm được `hoàn đúng tiền, ghi lỗi đúng hãng, chỉ chuyển người những ca cần duyệt`.
+Trường mà nếu sai thì tiền hoặc lỗi hãng sai theo: `parcels[].delay_cause`, `policies[].effective_from / auto_limit_vnd` (và `delivered_date`).
+Chúng tôi biết thế giới thật sẽ làm dữ liệu lệch ở: `đổi chính sách REFUND-v4 ngày 01/12 và các ca bất khả kháng do bão lũ`. Dấu hiệu nhìn thấy sớm nhất: `có lỗi hãng được ghi cho ca delay_cause = FORCE_MAJEURE sau ngày 01/12, hoặc khoản hoàn tự động > 100.000đ`.
 
-**Ví dụ drift trong 3 tháng tới** (lấy từ dòng "thế giới thật làm dữ liệu lệch"): cái gì đổi `____` · đổi ngày nào `____` ·
-trường nào cho thấy `____` · con số nào của Bản tiêu chí bị ảnh hưởng `____`.
-Đây là đầu vào đổi hay quan hệ vào–ra đổi? Chỉ số nào sẽ phát hiện? `__________`
+**Ví dụ drift trong 3 tháng tới** (lấy từ dòng "thế giới thật làm dữ liệu lệch"): cái gì đổi `chính sách REFUND-v3 → REFUND-v4: ngưỡng trễ để hoàn phí 3 → 2 ngày; hạn mức tự hoàn 200.000đ → 100.000đ; FORCE_MAJEURE bị bỏ khỏi fault_causes (bão lũ vẫn hoàn phí cho khách nhưng KHÔNG ghi lỗi hãng)` · đổi ngày nào `01/12/2026 (policies[].effective_from của REFUND-v4)` ·
+trường nào cho thấy `policies[].effective_from`, `fault_causes`, `auto_limit_vnd`, và `parcels[].delay_cause` · con số nào của Bản tiêu chí bị ảnh hưởng `wrongful_carrier_faults_max (ghi lỗi oan cho hãng ở ca bất khả kháng), wrongful_refund_vnd_max (hoàn vượt 100.000đ tự động), pass_rate_min; kéo theo escalation_rate và ROI vì hạn mức thấp hơn đẩy thêm ca sang người duyệt`.
+Đây là đầu vào đổi hay quan hệ vào–ra đổi? **Quan hệ vào–ra đổi** (cùng một ticket, cùng dữ liệu tracking, nhưng đáp án đúng khác đi sau 01/12). Chỉ số nào sẽ phát hiện? `số lỗi hãng ghi cho ca FORCE_MAJEURE sau 01/12 (phải = 0); số khoản tự hoàn > auto_limit_vnd của chính sách hiệu lực theo ngày; tỉ lệ ticket mà policy_id được áp không khớp với ngày hiệu lực; tỉ lệ chuyển người duyệt theo ngày`.
 
 **Ví dụ một dòng (đừng chép):** trường then chốt `parcels[].delivered_date` · bản ghi do máy quét ở điểm phát tạo ra, là nguồn
 sự thật về ngày giao · lệch khi điểm phát quét sót hoặc nhập bù bằng tay.
@@ -252,7 +252,7 @@ Bốn lăng kính (bắt buộc đủ cả bốn; dự án AI hay chết ở ba 
 | Lý do thất bại (viết ở thì quá khứ) | Lăng kính | Kiểm được hôm nay? (trace / data / config nào) | Thành cổng phòng ngừa nào (code hay config) / hay vào risk register |
 |---|---|---|---|
 | | Kỹ thuật | | |
-| | Kinh doanh | | |
+| Ba tháng sau ROI âm: tiền hoàn sai cộng phí người trực lớn hơn tiền tiết kiệm; có ngày tổng hoàn tự động vượt ngân sách 2.000.000đ của Finance; kho sỉ HCM-B2B (đơn từ 2 triệu) làm chi phí mỗi ticket cao hơn làm tay 10.000đ | Kinh doanh | Một phần: trần tiền và ngân sách đặt được trong config; số kho/hãng lỗ đọc ở khối "theo kho và hãng" của report. ROI = (số ticket × 10.000đ − chi phí − hoàn sai) / chi phí (`lab10/ops.py`) | **Config:** `business.daily_refund_cap_vnd`, `cost_budget_per_ticket_vnd`, `roi_min`, `pilot_scope` (cắt kho lỗ ở vòng 2). Không cần code. *(đề xuất TV4, cả bàn chốt)* |
 | | Con người và vận hành | | |
 | | Pháp lý | | |
 | | | | |
