@@ -313,10 +313,10 @@ Mỗi con số kèm một câu lý do, lấy từ `data/world.json` → `ops_lim
 
 | Khoá | Giá trị bàn đặt | Lý do (một câu, có số) |
 |---|---|---|
-| `business.daily_refund_cap_vnd` | | |
-| `business.cost_budget_per_ticket_vnd` | | |
-| `business.pilot_scope` (all / warehouse / percent) | | |
-| `business.roi_min` | | |
+| `business.daily_refund_cap_vnd` | `1500000` | Bằng 75% ngân sách hoàn tự động của Finance (`ops_limits.daily_auto_refund_budget_vnd` = 2.000.000đ), chừa 500.000đ cho ngày dồn ticket; ngày nhiều nhất ở run base / after là 155.000đ nên trần không chặn ca thường, chỉ chặn đợt bất thường (khoản vượt trần chuyển người duyệt) |
+| `business.cost_budget_per_ticket_vnd` | `1500` | Đúng trần tiền LLM mỗi ticket đã thống nhất với Ops / Finance (`ops_limits.max_llm_cost_per_ticket_vnd` = 1.500đ); ticket đắt nhất ở run after tốn 670đ nên còn dư hơn 2 lần, ticket dài bất thường (cài chữ, dán cả email) sẽ chuyển người đọc |
+| `business.pilot_scope` (all / warehouse / percent) | `all` (100%) | Run after đạt cả 9 ngưỡng ở mọi kho (pass_rate 1,0 ở CT, DN, HCM, HN), chưa có bằng chứng để cắt kho nào; chỉ kho `?` (đơn không tồn tại) tốn 10.359đ/ticket nhưng đó là ticket luôn chuyển người, theo dõi chứ chưa cắt |
+| `business.roi_min` | `0,25` | Khớp `roi_min` đã ký trong Bản tiêu chí: chi phí tối đa 8.000đ so với làm tay 10.000đ (`ops_facts.manual_cost_per_ticket_vnd`) tức tiết kiệm ít nhất 2.000đ trên 8.000đ bỏ ra; run after ROI 1,38 |
 
 ### B7.5 · Câu 2.10 · Cổng con người, vận hành, pháp lý + Runbook phần 1–3
 
