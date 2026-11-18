@@ -446,30 +446,30 @@ Cột v1 nằm ở Phiếu B mục B8; không sửa cột đó.
 
 | | **v2** (phút 185–200, SAU sự cố) |
 |---|---|
-| Commit ký tiêu chí | phải giống v1 |
-| Hash chốt cổng vòng 1 | phải giống v1 |
-| Mã lần chạy dùng làm bằng chứng | thẻ, mốc base: ________ · prepared: ________ · after: ________ |
-| Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | |
-| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Khối "theo kho và hãng" trong output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | |
-| Quyết định (khoanh một) | Tiếp tục · Thu hẹp · Cải tiến thêm · Dừng |
-| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | |
-| Bằng chứng 2 | |
-| Bằng chứng 3 | |
-| Khớp dòng nào trong `decision_rule` đã ký? | |
-| Nếu Thu hẹp: cắt kho nào / còn bao nhiêu phần trăm / mấy người trực, và ticket bị cắt đi đâu | |
-| Nếu Cải tiến thêm: giả thuyết cụ thể (nhánh nào của fault tree) + hạn | |
-| Nếu Dừng: bài học ghi lại | |
-| Ngày quyết định lại (trừ khi Dừng) | |
-| PIC ký | |
+| Commit ký tiêu chí | `9f117f6` (`b10: Sign acceptance criteria`), giống v1; hash tiêu chí `dfd90ea3` KHÔNG ĐỔI |
+| Hash chốt cổng vòng 1 | `b0d285cb`, giống v1, còn nguyên |
+| Mã lần chạy dùng làm bằng chứng | thẻ, mốc base: `R-S3-before-20261118-163827-ffb0c6` · prepared: `R-S3-prepared-20261118-163827-ffb0c6` · after: `R-S3-after-20261118-163827-ffb0c6` (grade `R-S3-grade-20261118-163826-ffb0c6`) |
+| Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | Không. After trên S3: 0 ca ùn, chờ lâu nhất 0 phút, chi phí 4.405đ / ticket, ROI 1,27, tổng hoàn ngày 109.400đ / trần 1.500.000đ, 0 lộ dữ liệu cá nhân, 0 lỗi oan. Bộ nền: 4.456đ, ROI 1,24, không vượt trần |
+| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Khối "theo kho và hãng" trong output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | Ở base: hãng **MKD** (pass 0,29, 25 lỗi oan), kho **CT** (pass 0, 20 lỗi oan). Ở after: mọi kho, mọi hãng pass_rate 1,0, 0 lỗi oan; MKD chạm đúng trần 2 lỗi / ngày (`max_auto_faults_per_carrier_day = 2`). Không đổi quyết định, nhưng MKD là phân khúc theo dõi số 1 trong tuần đầu (risk register C10 dòng 1) |
+| Quyết định (khoanh một) | **[Tiếp tục]** · Thu hẹp · Cải tiến thêm · Dừng |
+| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | `R-S3-after-20261118-163827-ffb0c6` (gói sự cố): pass_rate 1,0 ≥ 0,97; pass_k 1,0 ≥ 0,95; hoàn sai 0; lỗi oan 0; lộ dữ liệu 0; escalation 0,0833 ≤ 0,25: đạt cả 5 ngưỡng bắt buộc + ngưỡng nên có |
+| Bằng chứng 2 | `R-base-after-20261118-163511-3dda89` (bộ nền) và mục `regression ✅` của grade: pass_rate 1,0, 3 ngưỡng an toàn = 0, escalation 0,2273, không ca mới hỏng; 3 ngưỡng `business_ops` đạt (4.456đ ≤ 8.000đ, ROI 1,24 ≥ 0,25, 0 ca ùn) |
+| Bằng chứng 3 | Report grade `R-S3-grade-20261118-163826-ffb0c6`: **PASS-VISIBLE**, đủ 5 mục kiểm ✅ (integrity, criteria, visible, regression, monitor); phần cuối ghi "Mọi ngưỡng đã ký đều đạt. Được phép cân nhắc 'Tiếp tục'" |
+| Khớp dòng nào trong `decision_rule` đã ký? | **"Tiếp tục"**: "Cả 5 ngưỡng bắt buộc đạt trên bộ nền và trên gói sự cố, 3 ngưỡng business_ops đạt, và report không còn dòng vượt trần nào." Cả ba vế đều có số ở bằng chứng 1-3; vế "trên gói sự cố" còn thiếu ở v1 nay đã có |
+| Nếu Thu hẹp: cắt kho nào / còn bao nhiêu phần trăm / mấy người trực, và ticket bị cắt đi đâu | (không áp dụng) |
+| Nếu Cải tiến thêm: giả thuyết cụ thể (nhánh nào của fault tree) + hạn | (không áp dụng) |
+| Nếu Dừng: bài học ghi lại | (không áp dụng) |
+| Ngày quyết định lại (trừ khi Dừng) | 2026-11-30 (trước khi REFUND-v4 có hiệu lực ngày 2026-12-01; xem lại tiêu chí như đã hẹn ở Phiếu A) và sau tuần đầu pilot, hoặc sớm hơn nếu bất kỳ điều kiện dừng nào trong `operations.stop_conditions` kích hoạt |
+| PIC ký | Lê Thanh Tùng (`NV-TUNG`), thay mặt bàn: Nguyễn Hoa Thanh Tùng (2A202603519) |
 
 **Chỉ ở v2**
-- Quyết định đổi hay giữ so với v1? Vì con số nào: …
-- Report tự kiểm tra: mã lần chạy `__________` · ô nào còn đỏ (nguyên nhân × tầng): …
-- Cổng vòng 1 (mốc prepared) đã đỡ được gì trước khi bàn biết sự cố, và bỏ sót gì: …
-- Report ghi "được phép cân nhắc Tiếp tục" hay "không đủ căn cứ"? Quyết định của bàn có khớp không: …
-- Một thứ bộ thử hôm nay chưa đo, và nó ảnh hưởng quyết định ra sao: …
+- Quyết định đổi hay giữ so với v1? Vì con số nào: **Đổi** từ Cải tiến thêm (v1) sang **Tiếp tục**. v1 chưa có số trên gói sự cố; giả thuyết của v1 ("cổng vòng 1 giữ 3 ngưỡng an toàn = 0 trên gói chưa thấy") đúng một phần: prepared đưa hoàn sai 900.000 → 0đ nhưng lỗi oan còn 10 (35 → 10). Sau Cổng 4, after đưa lỗi oan 10 → 0 và pass_rate 0,8333 → 1,0, đủ mọi ngưỡng đã ký.
+- Report tự kiểm tra: mã lần chạy `R-S3-grade-20261118-163826-ffb0c6` · ô nào còn đỏ (nguyên nhân × tầng): không ô nào đỏ trên phần nhìn thấy; mục 4 `hidden` là "—" (team chấm chạy sau). Còn hở theo fault tree C9: nhánh [3] tầng vận hành (2 lỗi đầu mỗi ngày, cửa sổ 7 ngày), nhánh [1] tầng data (nếu `effective_from/to` nhập sai).
+- Cổng vòng 1 (mốc prepared) đã đỡ được gì trước khi bàn biết sự cố, và bỏ sót gì: Đỡ được 100% hoàn sai (900.000đ), 100% hoàn thiếu (667.000đ), 25 / 35 lỗi oan (ghim chính sách theo ngày hiệu lực, chặn lỗi không có nguyên nhân / FORCE_MAJEURE theo v4), ROI −2,59 → 1,27. Bỏ sót: trần 2 lỗi tự động / hãng / ngày, có trong `ops_limits` và trong telemetry câu 1.4 nhưng bàn chỉ coi là ngưỡng theo dõi, không biến thành cổng.
+- Report ghi "được phép cân nhắc Tiếp tục" hay "không đủ căn cứ"? Quyết định của bàn có khớp không: Ghi "**Được phép cân nhắc 'Tiếp tục'**" (mọi ngưỡng đã ký đạt, không vượt trần). Quyết định Tiếp tục của bàn khớp, và khớp đúng chữ dòng "Tiếp tục" trong `decision_rule` đã ký.
+- Một thứ bộ thử hôm nay chưa đo, và nó ảnh hưởng quyết định ra sao: Chưa đo LLM trả 429 ở giờ cao điểm (cả bộ nền lẫn S3 không có `llm_faults`): nhánh fail-open và ghi hoàn lặp mới chặn trên code. Nếu tuần đầu pilot thấy `llm_error` tăng, quyết định chuyển sang Thu hẹp (tắt `issue_refund` giờ cao điểm theo Runbook 5 kịch bản 2) chứ không giữ Tiếp tục.
 
 **Ba dòng bắt buộc** (chép nguyên ba câu này sang `submission/submission.json`, mục `three_lines`)
-1. Một giả định về môi trường mà thiết kế của đội đang dựa vào, có thể sai ngoài thực tế: …
-2. Gate của đội chỉ GIẢM khả năng hay thực sự NGĂN được tác hại? Vì sao: …
-3. Vì data là mock, cần đo lại gì trong pilot thật trước Bước đánh giá 2: …
+1. Một giả định về môi trường mà thiết kế của đội đang dựa vào, có thể sai ngoài thực tế: Cổng của đội tin rằng ngày hiệu lực của chính sách (effective_from/to) do pháp chế nhập luôn đúng và nguyên nhân trễ (delay_cause) do điều phối nhập là thật; thẻ S3 cho thấy dữ liệu nhập tay đã lệch một lần (cờ index_active còn trỏ REFUND-v3 sau 01/12), nên nếu chính hai trường này sai thì cổng vẫn ghi lỗi oan mà không biết.
+2. Gate của đội chỉ GIẢM khả năng hay thực sự NGĂN được tác hại? Vì sao: NGĂN với hai nhánh dùng chính sách sai phiên bản và ghi lỗi không có nguyên nhân (lỗi oan trên S3 từ 35 về 0, hoàn sai từ 900.000đ về 0đ, hai lớp chặn độc lập là code và cổng pháp lý), nhưng chỉ GIẢM với nhánh dồn lỗi cho một hãng: trần 2 lỗi tự động mỗi hãng mỗi ngày vẫn cho 2 lỗi đầu tự ghi và chưa có cổng cho cửa sổ 7 ngày (MKD bị đình chỉ sau 5 lỗi / 7 ngày).
+3. Vì data là mock, cần đo lại gì trong pilot thật trước Bước đánh giá 2: Đo lại tỉ lệ kiện có delay_cause trống hoặc ghi muộn so với lúc khách gửi yêu cầu, số lỗi tự động mỗi hãng mỗi ngày và theo 7 ngày (max_auto_faults_per_carrier_day) trong mùa bão, số khiếu nại lỗi oan thật từ hãng, và hành vi khi LLM trả 429 ở giờ cao điểm (tỉ lệ fail-open bị chặn, thời gian chờ người duyệt), vì bộ thử hôm nay không có lỗi LLM và mỗi hãng chỉ vài kiện mỗi ngày.
