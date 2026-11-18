@@ -222,8 +222,10 @@ Mở lại Phiếu B mục B3. Ghi ở đây những dòng đổi so với vòng
 
 | Trường / bảng | Vòng 1 bàn đã coi là (nguồn sự thật / bản sao / chưa hỏi) | Sau khi đọc thẻ thì thấy | Ảnh hưởng tới tiền hay lỗi hãng thế nào |
 |---|---|---|---|
-| | | | |
-| | | | |
+| *(bút khác màu)* `policies[].effective_from` / `effective_to` | Nguồn sự thật về phiên bản đang hiệu lực (B3) | Đúng: là trường duy nhất pháp chế ban hành; `as_of` của thẻ đã sau 2026-12-01 nên REFUND-v4 mới là bản hiệu lực | Quyết định mức trễ được hoàn (2 ngày thay vì 3), mức thưởng, hạn mức tự động 100.000đ, và FORCE_MAJEURE có phải lỗi hãng không |
+| *(bút khác màu)* `policies[].index_active` | Bản sao, có nguy cơ lệch (B3 ghi "người bật tay") | **Đã lệch thật**: vẫn trỏ REFUND-v3 sau ngày v4 hiệu lực; agent đọc đúng trường này (`policy REFUND-v3, pinned: false` ở `S3-01@11` base) | 900.000đ hoàn sai, 667.000đ hoàn thiếu, phần lớn trong 35 lỗi oan ở mốc base |
+| *(bút khác màu)* `parcels[].delay_cause` | Nhập tay bởi điều phối, có thể trống (B3) | Đúng như dự đoán; thêm: khi trống, agent mặc định `CARRIER`, tức là nghiêng về phía **có lợi cho LogiX, bất lợi cho hãng**; còn `FORCE_MAJEURE` thì đúng nhưng ý nghĩa đổi theo chính sách | Lỗi hãng oan cho MKD khi nguyên nhân trống hoặc là bão |
+| *(bút khác màu)* `ops_limits.max_auto_strikes_per_carrier_per_day` | Chưa hỏi (chỉ dùng làm ngưỡng báo vàng ở telemetry câu 1.4) | Là **quy tắc nghiệp vụ** đã thống nhất với Ops (từ lỗi thứ 3 / hãng / ngày phải có người duyệt), không chỉ là con số theo dõi; không hệ thống nào thi hành | 10 lỗi MKD còn lại ở mốc prepared (`S3-42`, `S3-43`) |
 
 ---
 
