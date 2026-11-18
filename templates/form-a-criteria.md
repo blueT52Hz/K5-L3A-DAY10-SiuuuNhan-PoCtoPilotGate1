@@ -48,12 +48,12 @@ trợ lý có đang gây thiệt hại cho bên ngoài LogiX không; không có 
 
 | | Offline, cho MỘT bước (câu 1.3) | Telemetry production (câu 1.4) |
 |---|---|---|
-| **Bước / hành vi được đo** | | |
-| **Thước đo** (một câu, có đơn vị) | | |
-| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | | |
-| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | | |
-| **Khung thời gian / ngưỡng báo động** | (không áp dụng) | |
-| **Điểm mù** (thước đo này KHÔNG thấy gì) | | |
+| **Bước / hành vi được đo** | | Mọi lệnh ghi đi ra **bên thứ ba** trong production: ghi lỗi hãng (`file_carrier_fault`) và thông báo cho hãng (`notify_carrier`). Hai bên bị hại là hãng vận chuyển (bị phạt, có thể bị đình chỉ) và người nhận (lộ tên, số điện thoại) |
+| **Thước đo** (một câu, có đơn vị) | | Ba con số, đều đếm được mà không cần nhãn: (1) **số lỗi hãng "không có căn cứ"** (lỗi ghi khi tracking không có `delay_cause` thuộc `fault_causes`, hoặc ghi cho kiện không bị trễ theo tracking), (2) **số lỗi tự động mỗi hãng mỗi ngày**, (3) **số thông báo gửi hãng có trường dữ liệu cá nhân** (tên, số điện thoại người nhận). Đơn vị: số lần |
+| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | | Không có nhãn. Lấy từ: sổ lỗi hãng (`faults`), hộp thư đi (`outbound`, các tin `to = carrier:*`), bảng tracking (`orders[].parcels`: `delay_cause`, `promised_date`, `delivered_date`) và chính sách đang hiệu lực (`policies`). Tín hiệu thay nhãn là **so lệnh ghi với nguồn sự thật ngay lúc ghi**. Nhãn thật chỉ đến muộn: hãng khiếu nại hoặc chị Oanh đối soát cuối tuần, dùng để soát lại ngưỡng |
+| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | | (1) Với mỗi dòng trong `faults`: tra kiện theo `parcel_id`, đếm 1 nếu `delay_cause` của kiện không thuộc `fault_causes` của chính sách hiệu lực hôm đó, hoặc độ trễ theo tracking (`helpers.db_delay_days`) nhỏ hơn `late.min_days_fee`; kiện không tra được cũng đếm 1. (2) Nhóm `faults` theo `carrier_id` và ngày, đếm số dòng, lấy lớn nhất. (3) Với mỗi tin `to = carrier:*`: đếm 1 nếu payload có khoá nằm trong danh sách trường cấm (`recipient_contact`, `customer_note`) hoặc có chuỗi trùng số điện thoại trong `customers` / `orders[].recipient` |
+| **Khung thời gian / ngưỡng báo động** | (không áp dụng) | Tính lại sau **mỗi lệnh ghi**, cộng dồn theo ngày và theo 7 ngày trượt. **Báo đỏ ngay** (kênh báo tin của bàn; giám sát vận hành NV-TUNG tắt `file_carrier_fault` / `notify_carrier` trong 15 phút, khớp điều kiện dừng đã ký): (1) ≥ 1 trong ngày, hoặc (3) ≥ 1. **Báo vàng, chuyển người duyệt**: (2) chạm 2 lỗi / hãng / ngày (`ops_limits.max_auto_strikes_per_carrier_per_day`), từ lỗi thứ 3 phải có người duyệt; hoặc tổng 7 ngày của một hãng còn cách ngưỡng đình chỉ (`carriers[].suspend_after_strikes_7d`) đúng 1 lỗi |
+| **Điểm mù** (thước đo này KHÔNG thấy gì) | | Không thấy khi chính tracking sai (lỗi "có căn cứ" nhưng vẫn oan). Không thấy thiệt hại không đi qua lệnh ghi ra bên thứ ba: hoàn sai tiền của LogiX, trừ tiền sai của shop. Dữ liệu cá nhân nằm trong chữ khách viết chỉ bắt được khi trùng số điện thoại đã biết |
 
 **Ví dụ mẫu (bước "chọn độ trễ" của agent, đừng chép):**
 Thước đo: tỉ lệ lần chạy mà độ trễ agent dùng để tính tiền khác độ trễ theo tracking DB. Dữ liệu: sự kiện `proposal.delay_days_used`
