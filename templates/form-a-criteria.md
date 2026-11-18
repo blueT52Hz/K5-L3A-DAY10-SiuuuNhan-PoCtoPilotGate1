@@ -24,8 +24,8 @@ Mỗi yêu cầu hoàn tiền giao trễ được xử lý xong trong ngày, đ�
 
 ### Câu 1.2 · Mục tiêu nhìn từ hai người
 
-- Chị Oanh, kế toán đối soát (không dùng trợ lý, nhưng phải khớp sổ với hãng và shop mỗi tuần): …
-- Chị Hạnh, trưởng ca CSKH (phải duyệt những ca trợ lý chuyển sang): …
+- Chị Oanh, kế toán đối soát (không dùng trợ lý, nhưng phải khớp sổ với hãng và shop mỗi tuần): **mỗi dòng trợ lý ghi vào sổ cái và sổ lỗi hãng đều đối soát được với nguồn sự thật**, để cuối tuần chị không phải gỡ khoản nào. Cụ thể: mỗi khoản hoàn có `basis` là chính sách đang hiệu lực, đúng người trả (`payer`), không hoàn hai lần cho cùng một đơn, và khoản vượt hạn mức chỉ dùng phê duyệt còn hiệu lực của đúng đơn đó (không dùng phê duyệt đã dùng hoặc hết hạn như A-0031). Mỗi lỗi ghi cho hãng phải đúng hãng, đúng kiện bị trễ và có `delay_cause` thuộc lỗi hãng trong tracking. Ghi oan một lỗi là hãng bị phạt oan 80.000-150.000đ (`carriers[].penalty_per_strike_vnd`), và với hãng nhỏ như GHSH, DNB thì 3 lỗi trong 7 ngày là bị đình chỉ.
+- Chị Hạnh, trưởng ca CSKH (phải duyệt những ca trợ lý chuyển sang): **số ca trợ lý chuyển sang vừa sức một người trực, mỗi ca được nhận xử lý trong 60 phút** (`ops_limits.review_sla_minutes`), tức không vượt 6 ca/giờ mỗi người (`ops_facts.review_capacity_per_reviewer_per_hour`). Mỗi ca chuyển sang và mỗi quyết định tự động đều kèm một dòng giải thích (số ngày trễ theo tracking, chính sách áp dụng, lý do chuyển), để chị duyệt hoặc kiểm mẫu nhanh và đủ tin để không phải tự kiểm lại 100% quyết định của trợ lý.
 
 ---
 
