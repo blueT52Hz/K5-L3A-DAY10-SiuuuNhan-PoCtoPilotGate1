@@ -30,7 +30,7 @@ Mỗi lệnh `lab10.eval` và `lab10.grade` tự ghi một dòng vào `runs/jour
 
 | # | Mã lần chạy | Bộ ticket · mốc | Đổi MỘT thứ gì so với lần trước | pass_rate (khoảng tin cậy 95%) | pass_k | Hoàn sai (đ) · lỗi hãng oan · lộ dữ liệu | Tỉ lệ chuyển người | Kết luận (một câu) |
 |---|---|---|---|---|---|---|---|---|
-| 1 | | Sx · prepared | nhận thẻ đã bốc, chưa sửa thêm (đúng cổng vòng 1 đã chốt) | | | | | |
+| 1 | `R-S3-prepared-20261118-162827-212f32` (grade `R-S3-grade-20261118-162826-212f32`) | S3 · prepared | nhận thẻ đã bốc, chưa sửa thêm (đúng cổng vòng 1 đã chốt) | 0,8333 | 0,8333 | 0 · 10 · 0 | 0,0833 | Cổng vòng 1 kéo pass_rate 0,25 → 0,83 và lỗi oan 35 → 10; còn hỏng `S3-42`, `S3-43` (MKD): lỗi đúng nguyên nhân nhưng vượt 2 lỗi / hãng / ngày |
 | 2 | | Sx · after | | | | | | |
 | 3 | | Sx · after | | | | | | |
 | 4 | | base · after | (kiểm không regression) | | | | | |
@@ -47,19 +47,21 @@ Chạy **trước khi sửa bất cứ thứ gì**:
 python3 -m lab10.grade --incident Sx
 ```
 
-- Mã lần chạy grade: `__________` · base: `__________` · prepared: `__________`
-- Cổng vòng 1 đỡ được ô / con số nào (so cột base với cột prepared): …
-- Khối kinh doanh và vận hành còn dòng nào vượt trần: …
+- Mã lần chạy grade: `R-S3-grade-20261118-162826-212f32` · base: `R-S3-before-20261118-162827-212f32` · prepared: `R-S3-prepared-20261118-162827-212f32`
+  *(Lần grade đầu `R-S3-grade-20261118-162619-212f32` báo `integrity ❌` chỉ vì các file khoá được checkout với xuống dòng CRLF trên Windows; đã checkout lại đúng bản trong git (LF), không sửa nội dung; số base / prepared hai lần giống hệt.)*
+- Cổng vòng 1 đỡ được ô / con số nào (so cột base với cột prepared): trên gói S3: hoàn sai **900.000 → 0đ**, hoàn thiếu 667.000 → 0đ (ghim REFUND-v4 theo ngày hiệu lực: trễ 2 ngày được hoàn, mức thưởng mới), lỗi oan **35 → 10** (cổng tính lại lỗi hãng theo `fault_causes` của v4: FORCE_MAJEURE không còn là lỗi hãng; `carrier_fault_requires_recorded_cause` chặn kiện không ghi nguyên nhân), pass_rate / pass_k **0,25 → 0,8333**, ROI **−2,59 → 1,27**. Theo kho: CT 0 → 0,75, DN 0 → 0,5, HCM / HN 0,5 → 1,0; hãng MKD 0,29 → 0,71, VNX / DNB → 1,0. Chưa đỡ: 10 lỗi oan còn lại đều của **MKD** (`S3-42`, `S3-43`).
+- Khối kinh doanh và vận hành còn dòng nào vượt trần: **không** (cả base, prepared). Hàng chờ 0 ca ùn, chi phí 4.405đ / ticket, tổng hoàn ngày 109.400đ / trần 1.500.000đ. Chỉ còn **ngưỡng đã ký chưa đạt**: pass_rate 0,8333 < 0,97; pass_k 0,8333 < 0,95; `wrongful_carrier_faults` 10 > 0.
 
 **Mở lại pre-mortem (Phiếu B mục B6), viết bằng bút khác màu.** Với thẻ S1, S3, S4, S5 đây là một phần của phần riêng theo thẻ.
 
-- Sự cố trên thẻ thuộc lăng kính nào (kỹ thuật, kinh doanh, con người và vận hành, pháp lý)? …
-- Có nằm trong các lý do bàn đã viết không? Nếu có: cổng vòng 1 đã đỡ được bao nhiêu (đọc cột prepared trong report)? Nếu không: vì sao cả bàn không nghĩ tới? …
+- Sự cố trên thẻ thuộc lăng kính nào (kỹ thuật, kinh doanh, con người và vận hành, pháp lý)? Chính là **kỹ thuật** (chính sách chọn theo cờ `index_active` cũ; nguyên nhân trống bị mặc định là lỗi hãng) và **pháp lý** (bên thứ ba MKD bị phạt 120.000đ / lỗi, vi phạm phụ lục đã ký với hãng); thêm **con người và vận hành** (từ lỗi thứ 3 trong ngày không ai bên LogiX xác nhận).
+- Có nằm trong các lý do bàn đã viết không? Nếu có: cổng vòng 1 đã đỡ được bao nhiêu (đọc cột prepared trong report)? Nếu không: vì sao cả bàn không nghĩ tới? **Có, phần lớn**: B3 (ví dụ drift REFUND-v3 → v4 ngày 2026-12-01, FORCE_MAJEURE không còn là lỗi hãng) và B6 dòng 2 (ghi lỗi khi tracking không có nguyên nhân). Cổng 0 + Cổng 1b + `legal.carrier_fault_requires_recorded_cause` đỡ 25 / 35 lỗi oan và toàn bộ 900.000đ hoàn sai. **Chưa có**: trần 2 lỗi tự động / hãng / ngày (`ops_limits.max_auto_strikes_per_carrier_per_day`); bàn có ghi nó ở telemetry câu 1.4 (báo vàng) và ranh giới đầu ra A4, nhưng không biến thành cổng vì nghĩ trần này chỉ là con số theo dõi, không phải lệnh ghi bị chặn.
 - Lý do còn thiếu, thêm bây giờ:
 
 | Lý do thất bại (viết ở thì quá khứ) | Lăng kính | Kiểm được bằng gì (trace / data / config nào) |
 |---|---|---|
-| | | |
+| *(bút khác màu)* Một ngày bão, trợ lý ghi liền 4-5 lỗi cho cùng hãng MKD, mỗi lỗi đều "đúng nguyên nhân" nhưng vượt trần 2 lỗi tự động / hãng / ngày đã thống nhất với Ops; không ai xác nhận, hãng bị phạt dồn và chạm ngưỡng đình chỉ 5 lỗi / 7 ngày | Con người và vận hành · Pháp lý | Trace `S3-42@11`, `S3-43@11` (stage after: `file_carrier_fault` MKD vẫn ghi, nhãn `faults: []`); `ops_limits.max_auto_strikes_per_carrier_per_day = 2`; `carriers[MKD].suspend_after_strikes_7d = 5`; `fault_rows(carrier_id=...)` trong cùng ngày |
+| *(bút khác màu)* Ngày đổi chính sách, người phụ trách chỉ mục quên bật cờ `index_active` cho REFUND-v4, trợ lý dùng bản cũ cả tuần | Kỹ thuật · Con người và vận hành | Trace sự kiện `policy` (`REFUND-v3`, `pinned: false` ở base) so với `effective_from` của REFUND-v4 và `as_of` trong `incidents/S3/world_patch.json` |
 
 ---
 
