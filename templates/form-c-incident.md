@@ -32,7 +32,7 @@ Mỗi lệnh `lab10.eval` và `lab10.grade` tự ghi một dòng vào `runs/jour
 |---|---|---|---|---|---|---|---|---|
 | 1 | `R-S3-prepared-20261118-162827-212f32` (grade `R-S3-grade-20261118-162826-212f32`) | S3 · prepared | nhận thẻ đã bốc, chưa sửa thêm (đúng cổng vòng 1 đã chốt) | 0,8333 | 0,8333 | 0 · 10 · 0 | 0,0833 | Cổng vòng 1 kéo pass_rate 0,25 → 0,83 và lỗi oan 35 → 10; còn hỏng `S3-42`, `S3-43` (MKD): lỗi đúng nguyên nhân nhưng vượt 2 lỗi / hãng / ngày |
 | 2 | `R-S3-after-20261118-163505-3dda89` | S3 · after | Thêm Cổng 4: trần 2 lỗi tự động / hãng / ngày (`ops_limits`) trước `file_carrier_fault` | 1,0 [1,0; 1,0] | 1,0 | 0 · 0 · 0 | 0,0833 | Hết 10 lỗi oan MKD còn lại mà không thêm ca chuyển người (`S3-43@11`: `fault_strike_cap` → deny, khách vẫn được 24.000đ) |
-| 3 | | Sx · after | | | | | | |
+| 3 | `R-S3-after-20261118-163827-ffb0c6` (grade `R-S3-grade-20261118-163826-ffb0c6`, **PASS-VISIBLE**) | S3 · after | Thêm 2 chỉ số theo dõi (`max_auto_faults_per_carrier_day`, `fault_gate_block_rate`) + 2 điều kiện dừng trong `operations`; code không đổi so với lần 2 | 1,0 [1,0; 1,0] | 1,0 | 0 · 0 · 0 | 0,0833 (kể cả kiểm mẫu: 0,1667) | Đủ 5 mục kiểm ✅ (integrity, criteria, visible, regression, monitor); mọi ngưỡng đã ký đạt, "được phép cân nhắc Tiếp tục" |
 | 4 | `R-base-after-20261118-163511-3dda89` | base · after | (kiểm không regression) | 1,0 [1,0; 1,0] | 1,0 | 0 · 0 · 0 | 0,2273 | Không ca mới hỏng: bộ nền mỗi ticket là một ngày riêng nên trần lỗi / hãng / ngày không chạm; chi phí 4.456đ, ROI 1,24 giữ nguyên |
 
 ---
@@ -353,7 +353,7 @@ Thẻ S5 dùng mục này cho một con số kinh doanh: chi phí mỗi ticket t
 | **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | Đếm số sự kiện ghi lỗi theo khoá (`day`, `seed`, `carrier_id`), lấy **max**; không có lỗi nào thì trả 0. Chỉ số kèm: số trial có ít nhất một sự kiện guard thuộc 3 loại trên chia cho tổng số trial (mẫu số tối thiểu 1). Trial không có `events` coi như không có sự kiện |
 | **Khung thời gian / ngưỡng báo động** | Tính theo từng ngày vận hành (ca 480 phút), cập nhật sau mỗi lệnh ghi. `max_auto_faults_per_carrier_day`: **vàng** = 2 (chạm trần `ops_limits`, lỗi tiếp theo chờ NV-HANH), **đỏ** > 2 (cổng đã thủng: tắt `file_carrier_fault`). `fault_gate_block_rate`: **vàng** > 10%, **đỏ** > 30% trong một ngày (dữ liệu tracking / chính sách đang lệch, NV-TUNG kiểm cờ `index_active` và `delay_cause`) |
 | **Điểm mù** (chỉ số này KHÔNG thấy gì) | Không thấy lỗi oan khi tracking sai mà vẫn dưới trần (2 lỗi đầu trong ngày); không thấy cửa sổ 7 ngày (ngưỡng đình chỉ `suspend_after_strikes_7d`); không thấy hoàn sai tiền cho khách |
-| Giá trị trên bộ nền · trên thẻ (đọc mục `monitor` của report) | Thẻ S3 (after, `R-S3-after-20261118-163721-ffb0c6`): `max_auto_faults_per_carrier_day = 2`, `fault_gate_block_rate = 0,333`. Bộ nền: xem report grade ở C0 (bước sau) |
+| Giá trị trên bộ nền · trên thẻ (đọc mục `monitor` của report) | Thẻ S3 (after, `R-S3-after-20261118-163721-ffb0c6`): `max_auto_faults_per_carrier_day = 2`, `fault_gate_block_rate = 0,333`. Report grade `R-S3-grade-20261118-163826-ffb0c6`, mục `monitor ✅`: `max_auto_faults_per_carrier_day` bộ nền **1** · thẻ **4** ở mốc base (trước khi có Cổng 4: MKD nhận 4 lỗi một ngày) và bộ nền **1** · thẻ **2** ở mốc after (chạm đúng trần); `fault_gate_block_rate` bộ nền **0** · thẻ **0,333** ở mốc after |
 
 ---
 
