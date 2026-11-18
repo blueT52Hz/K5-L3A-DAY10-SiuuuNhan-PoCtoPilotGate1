@@ -253,10 +253,14 @@ Bốn lăng kính (bắt buộc đủ cả bốn; dự án AI hay chết ở ba 
 
 | Lý do thất bại (viết ở thì quá khứ) | Lăng kính | Kiểm được hôm nay? (trace / data / config nào) | Thành cổng phòng ngừa nào (code hay config) / hay vào risk register |
 |---|---|---|---|
-| | Kỹ thuật | | |
+| Trợ lý đã tin số ngày trễ khách tự khai: chỉ cần viết "trễ 5 ngày, tôi chắc chắn" là được hoàn và hãng bị ghi lỗi; tin đồn lan trên nhóm khách, lỗi oan dồn lên VNX | Kỹ thuật | Có: `T-002@55` (`model_override` db 2 / ticket 5, B2), `mock_llm.py` (`trust_claim` khi có chữ "chắc chắn") | **→ Cổng 1 (code, Dương):** `write_gate` tính lại tiền và quyết định ghi lỗi theo tracking (`db_delay_days`, `effective_policy`, `carrier_at_fault`) |
+| Trợ lý đã ghi lỗi cho hãng khi tracking không ghi nguyên nhân, hoặc ghi cho kiện đầu tiên chứ không phải kiện trễ, hoặc vẫn dùng REFUND-v3 sau ngày REFUND-v4 hiệu lực; GHSH bị đình chỉ sau 3 lỗi / 7 ngày | Kỹ thuật | Có: `agent.py` gán `CARRIER` khi `delay_cause` trống, ghi cho `parcels[0]`, chọn chính sách theo cờ `index_active`; HAZOP B4 dòng INVALID, INCOMPLETE | **→ Cổng 2 (code + config):** `pre_guard` ghim chính sách theo ngày hiệu lực; bật `legal.carrier_fault_requires_recorded_cause = true` |
 | Ba tháng sau ROI âm: tiền hoàn sai cộng phí người trực lớn hơn tiền tiết kiệm; có ngày tổng hoàn tự động vượt ngân sách 2.000.000đ của Finance; kho sỉ HCM-B2B (đơn từ 2 triệu) làm chi phí mỗi ticket cao hơn làm tay 10.000đ | Kinh doanh | Một phần: trần tiền và ngân sách đặt được trong config; số kho/hãng lỗ đọc ở khối "theo kho và hãng" của report. ROI = (số ticket × 10.000đ − chi phí − hoàn sai) / chi phí (`lab10/ops.py`) | **Config:** `business.daily_refund_cap_vnd`, `cost_budget_per_ticket_vnd`, `roi_min`, `pilot_scope` (cắt kho lỗ ở vòng 2). Không cần code. *(đề xuất TV4, cả bàn chốt)* |
-| | Con người và vận hành | | |
-| | Pháp lý | | |
+| Nhân viên CSKH đã không tin trợ lý và tự kiểm lại 100% quyết định, hàng chờ ùn, chị Hạnh yêu cầu dừng | Con người và vận hành | Có: `staff_behavior.trust_conditions` (cần ghi chú giải thích, kiểm mẫu ≥ 10%, người duyệt đứng tên NV-HANH) | **Config:** `operations.approver_id = NV-HANH`, `decision_note = true`, `review_sampling_pct = 10` (B7.5) |
+| Giờ cao điểm 1 người trực không duyệt kịp các ca chuyển sang, khách chờ quá 60 phút | Con người và vận hành | Có: Phụ lục D của guide; `ops_facts` (6 ca / giờ / người) | Config: `operations.reviewers_on_shift`, `max_queue_wait_minutes = 60`; runbook Giờ cao điểm (B7.6) |
+| Hãng nhận được tên, số điện thoại người nhận quà và nguyên văn chữ khách viết; người nhận khiếu nại, pháp chế buộc dừng | Pháp lý | Có: `agent.py` thêm `recipient_contact` cho đơn `is_gift` (O-1024, O-1026), `customer_note` ở `T-002@55` dòng 08 | **→ Cổng 3 (config + code):** `legal.pii_fields_blocked_to_third_party = ["recipient_contact", "customer_note"]`; `write_gate` trước `notify_carrier` chỉ giữ `carrier_notice_fields` |
+
+**Chọn làm cổng phòng ngừa hôm nay (cả bàn chốt):** Cổng 1 và Cổng 2 (lăng kính kỹ thuật, code của Dương trong `guards.py`), Cổng 3 (lăng kính pháp lý), cùng các con số `business` (lăng kính kinh doanh, Hiếu) và `operations` (lăng kính con người và vận hành, Tùng). Các lý do còn lại (kho lỗ, nhân viên không tin trợ lý khi lượng việc tăng) theo dõi ở Risk register (Phiếu C mục C10).
 | | | | |
 
 ---
