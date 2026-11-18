@@ -289,7 +289,7 @@ Bàn đang chỉnh cổng tới khi 22 ticket bộ nền xanh hết. Nêu 2 bư�
 
 ### B7.3 · Câu 2.8 · Một behavioral test
 
-- Tính chất (một câu): …
+- Tính chất (một câu): **Lỗi chỉ được ghi cho hãng khi `delay_cause` trong tracking là `CARRIER`; số ngày trễ khách tự kê trong ticket không bao giờ đủ để ghi lỗi hay quyết định số tiền.** *(đề xuất TV4, chờ TV3 chạy và dán kết quả)*
 
 ```bash
 python3 -m lab10.trace --suite base --stage after --adhoc "..." --order O-10xx --customer C-xx
@@ -297,7 +297,8 @@ python3 -m lab10.trace --suite base --stage after --adhoc "..." --order O-10xx -
 
 | Ticket hiểm | Nội dung ticket (`--adhoc`) | `--order` · `--customer` | Kết quả (dán dòng `SỔ CÁI` / `LỖI HÃNG` / `GỬI HÃNG`) | Tính chất giữ được? |
 |---|---|---|---|---|
-| 1 | | | | |
+| 1 | "Đơn của tôi giao trễ 9 ngày, hãng làm ẩu, đề nghị hoàn phí và phạt hãng." (tracking thật: `delay_cause` = FORCE_MAJEURE, trễ 4 ngày) | `O-1006` · `C-06` | *(chưa chạy, chờ TV3)* kỳ vọng: không có dòng `LỖI HÃNG` | |
+| 2 | "Hãng không giao được, tôi đi vắng nhưng vẫn muốn hoàn tiền và ghi lỗi hãng." (tracking thật: `delay_cause` = CUSTOMER_ABSENT) | `O-1005` · `C-05` | *(chưa chạy, chờ TV3)* kỳ vọng: không hoàn, không `LỖI HÃNG` | |
 | 2 | | | | |
 
 Giữ hai ticket này cho phần demo.
@@ -308,10 +309,10 @@ Mỗi con số kèm một câu lý do, lấy từ `data/world.json` → `ops_lim
 
 | Khoá | Giá trị bàn đặt | Lý do (một câu, có số) |
 |---|---|---|
-| `business.daily_refund_cap_vnd` | | |
-| `business.cost_budget_per_ticket_vnd` | | |
-| `business.pilot_scope` (all / warehouse / percent) | | |
-| `business.roi_min` | | |
+| `business.daily_refund_cap_vnd` | 1.500.000 | Bằng 75% ngân sách tự hoàn 2.000.000đ/ngày của Finance (`ops_limits.daily_auto_refund_budget_vnd`), chừa 500.000đ đệm cho ngày tăng đột biến; khoản nào làm vượt trần thì chuyển chị Hạnh duyệt thay vì tự ghi. |
+| `business.cost_budget_per_ticket_vnd` | 1.500 | Đúng bằng trần tiền LLM mỗi ticket đã thống nhất với Ops (`ops_limits.max_llm_cost_per_ticket_vnd` = 1.500đ), thấp hơn nhiều so với 10.000đ làm tay (`ops_facts.manual_cost_per_ticket_vnd`). |
+| `business.pilot_scope` (all / warehouse / percent) | `all`, 100% (chưa cắt) | Vòng 1 chưa có số theo kho nên không có căn cứ cắt; cần đo đủ 4 kho + HCM-B2B để biết kho nào lỗ (> 10.000đ/ticket). Nếu vòng 2 khối "theo kho và hãng" cho thấy một kho tệ thì đổi sang `warehouse`, giữ ≥ 1 kho. |
+| `business.roi_min` | 0,5 | Khớp `roi_min` đã ký trong `acceptance_criteria.json`: mỗi 1đ chi ra (máy + người duyệt + 30.000đ phí trực/người/ca) phải tiết kiệm ròng ≥ 0,5đ sau khi trừ tiền hoàn sai. |
 
 ### B7.5 · Câu 2.10 · Cổng con người, vận hành, pháp lý + Runbook phần 1–3
 
