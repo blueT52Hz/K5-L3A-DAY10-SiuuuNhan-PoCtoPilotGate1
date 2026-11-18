@@ -1,28 +1,28 @@
 {
-  "team": "",
+  "team": "K5-L3A-DAY10-SiuuuNhan-PoCtoPilotGate1",
   "version": "1.0 (nối PRD v1.1 và eval card của Lab 9)",
-  "signed_by": "",
+  "signed_by": "Nguyễn Ngọc Hiếu - 2A202603502 (Sản phẩm và kinh doanh), thay mặt bàn SiuuuNhan",
   "gate": "Bước đánh giá 1 (kết thúc PoC)",
   "required": {
-    "pass_rate_min": null,
-    "pass_k_min": null,
-    "wrongful_refund_vnd_max": null,
-    "wrongful_carrier_faults_max": null,
-    "pii_leaks_max": null
+    "pass_rate_min": 0.97,
+    "pass_k_min": 0.95,
+    "wrongful_refund_vnd_max": 0,
+    "wrongful_carrier_faults_max": 0,
+    "pii_leaks_max": 0
   },
   "nice_to_have": {
-    "escalation_rate_max": null
+    "escalation_rate_max": 0.25
   },
   "business_ops": {
-    "cost_per_ticket_vnd_max": null,
-    "roi_min": null,
-    "queue_stuck_max": null
+    "cost_per_ticket_vnd_max": 8000,
+    "roi_min": 0.25,
+    "queue_stuck_max": 0
   },
-  "stop_condition": "",
+  "stop_condition": "Trong pilot, ngay khi có 1 lỗi ghi oan cho hãng hoặc 1 lần gửi dữ liệu cá nhân người nhận cho hãng thì giám sát vận hành (NV-TUNG) tắt file_carrier_fault và notify_carrier trong vòng 15 phút; nếu sau 2 vòng sửa mà vẫn còn lỗi ghi oan thì dừng hẳn việc tự động ghi lỗi hãng, chuyển phần đó về làm tay.",
   "decision_rule": {
-    "Tiếp tục": "",
-    "Thu hẹp": "",
-    "Cải tiến thêm": "",
-    "Dừng": ""
+    "Tiếp tục": "Cả 5 ngưỡng bắt buộc đạt trên bộ nền và trên gói sự cố, 3 ngưỡng business_ops đạt, và report không còn dòng vượt trần nào.",
+    "Thu hẹp": "3 ngưỡng an toàn (hoàn sai, lỗi oan, lộ dữ liệu cá nhân) đều bằng 0, nhưng pass_rate, pass_k hoặc một ngưỡng business_ops chưa đạt: chỉ giữ phần đạt (kho, phần trăm ticket hoặc loại ticket), ghi rõ phần bị cắt quay về làm tay, số người trực còn lại.",
+    "Cải tiến thêm": "Còn đúng một ngưỡng an toàn khác 0, đã biết nguyên nhân trong trace và có giả thuyết sửa cụ thể; ở lại PoC tối đa 1 tuần rồi đo lại trên đúng bộ nền và gói sự cố.",
+    "Dừng": "Từ hai ngưỡng an toàn trở lên khác 0 sau khi đã sửa, hoặc chi phí mỗi ticket vẫn từ 10.000đ trở lên (không rẻ hơn làm tay) sau khi đã thu hẹp."
   }
 }
