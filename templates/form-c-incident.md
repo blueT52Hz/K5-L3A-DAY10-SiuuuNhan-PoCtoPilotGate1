@@ -78,33 +78,33 @@ python3 -m lab10.trace --suite Sx --ticket <ID> --seed 11
 Ba loại lỗi: **giới hạn của hệ thống** · **lỗi ngữ cảnh** · **lỗi chìm** (cả người dùng lẫn hệ thống đều không nhận ra; nguy hiểm nhất,
 người chịu hại thường là bên thứ ba). Định nghĩa đầy đủ và ví dụ: Phiếu B mục B2.
 
-**Tác hại của thẻ:** cho ai `____` · đo bằng gì `____` · bao nhiêu ở mốc base `____`
+**Tác hại của thẻ:** cho ai `hãng Mekong Delta Ship (MKD) và các hãng khác bị ghi lỗi oan, phạt 120.000đ / lỗi với MKD; khách trễ 2 ngày bị từ chối / hoàn thiếu` · đo bằng gì `wrongful_carrier_faults, under_refund_vnd, wrongful_refund_vnd trên gói S3 (report grade)` · bao nhiêu ở mốc base `35 lỗi oan (MKD 25), hoàn thiếu 667.000đ, hoàn sai 900.000đ, pass_rate 0,25 (R-S3-before-20261118-162827-212f32)`
 
 ### Phần 1 · Ghi lỗi (bằng chứng là mã ticket@seed và dòng trace, không tả chung chung)
 
 | # | Lỗi: người ta thấy gì (dán dòng trace / sổ cái) | Ai gặp, ai chịu | Hệ trọng (thấp / cao) | Loại lỗi (giới hạn hệ thống / ngữ cảnh / chìm) |
 |---|---|---|---|---|
-| 1 | | | | |
-| 2 | | | | |
-| 3 | | | | |
+| 1 | `S3-01@11` (base): `03 policy {"policy_id": "REFUND-v3", "pinned": false}` trong khi ngày chạy đã sau 2026-12-01 (REFUND-v4 hiệu lực); `02 tracking {"cause": "FORCE_MAJEURE", "cause_recorded": true}` → `06 file_carrier_fault ... "carrier_id": "MKD"`. Nhãn `faults: []` (v4: bão lũ hoàn cho khách nhưng không ghi lỗi hãng) | Khách không thấy gì (vẫn được 22.000đ). Người chịu: MKD và tài xế TX-MKD-07, phạt 120.000đ oan | Cao | **Lỗi chìm** |
+| 2 | `S3-42@11` (base): `04 proposal {"amount_vnd": 22000, ..., "delay_days_used": 5}` theo REFUND-v3 (chỉ phí ship); nhãn `refund_vnd: 47400` (v4: trễ ≥ 5 ngày được thêm 10% giá trị hàng). Cùng gốc với ghi chú CSKH: khách trễ 2 ngày bị từ chối dù thông báo v4 nói từ 2 ngày là được hoàn | Khách thấy: số tiền / lời từ chối trái với thông báo chính sách mới. Người chịu: khách, CSKH phải giải thích | Cao (667.000đ hoàn thiếu trên gói) | **Lỗi ngữ cảnh** (hệ thống "chạy đúng" theo bản nó đọc, người dùng thấy sai so với chính sách họ được báo) |
+| 3 | `S3-42@11`, `S3-43@11` (stage after, đã có cổng vòng 1): `03 policy REFUND-v4 pinned: true`, `02 tracking {"cause": "CARRIER", "cause_recorded": true}` nhưng `06 file_carrier_fault ... "carrier_id": "MKD"` vẫn ghi; nhãn `faults: []`. Đây là lỗi MKD thứ 3, 4 trong cùng ngày (cùng `scenario`), vượt `ops_limits.max_auto_strikes_per_carrier_per_day = 2` | Không ai trong LogiX thấy; MKD nhận "liền mấy lỗi, không ai xác nhận" (thẻ). Người chịu: MKD, dồn tới ngưỡng đình chỉ 5 lỗi / 7 ngày | Cao | **Lỗi chìm** |
 
 ### Phần 2 · Tìm nguồn (đánh dấu câu nào đúng với từng lỗi)
 
 | Câu hỏi | Lỗi 1 | Lỗi 2 | Lỗi 3 |
 |---|---|---|---|
-| **Đầu vào:** hệ thống có tự diễn giải / sửa đầu vào của người dùng theo cách họ không lường? Có đặt sai trọng số cho một lời nói hay tín hiệu của người dùng? | | | |
-| **Độ liên quan:** hệ thống có thiếu dữ liệu cần để quyết đúng? Dữ liệu vào có nhiễu, thiếu ổn định? | | | |
-| **Thứ bậc hệ thống:** có hai hệ thống cùng ghi / cùng theo dõi một thứ mà không rõ bên nào là chủ (ví dụ CSKH hoàn tay và trợ lý cùng ghi sổ)? | | | |
-| **Trạng thái hỏng:** nhiều lỗi cộng lại có làm tính năng không dùng được (ví dụ LLM lỗi liên tiếp)? | | | |
+| **Đầu vào:** hệ thống có tự diễn giải / sửa đầu vào của người dùng theo cách họ không lường? Có đặt sai trọng số cho một lời nói hay tín hiệu của người dùng? | Không | Không | Không |
+| **Độ liên quan:** hệ thống có thiếu dữ liệu cần để quyết đúng? Dữ liệu vào có nhiễu, thiếu ổn định? | Không: tracking có `FORCE_MAJEURE`, chính sách v4 có sẵn | Không | **Đúng**: agent không đọc số lỗi đã ghi cho hãng trong ngày (`fault_rows`) và trần `ops_limits` khi quyết định ghi lỗi |
+| **Thứ bậc hệ thống:** có hai hệ thống cùng ghi / cùng theo dõi một thứ mà không rõ bên nào là chủ (ví dụ CSKH hoàn tay và trợ lý cùng ghi sổ)? | **Đúng (nguồn chính)**: "phiên bản đang hiệu lực" có hai nguồn: `effective_from/to` (pháp chế ban hành, nguồn sự thật) và cờ `index_active` (bản sao, người bật tay); agent đọc bản sao | **Đúng**: cùng gốc với lỗi 1, nhưng tác hại ở chiều tiền cho khách | Đúng một phần: trần lỗi / hãng / ngày nằm ở `ops_limits` (Ops đặt) nhưng không hệ thống nào thi hành |
+| **Trạng thái hỏng:** nhiều lỗi cộng lại có làm tính năng không dùng được (ví dụ LLM lỗi liên tiếp)? | Không | Không | **Đúng**: từng lỗi riêng lẻ hợp lệ, cộng dồn trong một ngày bão thành phạt dồn và đình chỉ hãng |
 
 ### Phần 3 · Hướng xử lý (mỗi lỗi một ô)
 
 | | Lỗi 1 | Lỗi 2 | Lỗi 3 |
 |---|---|---|---|
-| Vì sao người gặp coi đây là lỗi | | | |
-| Kiểu giải pháp: phản hồi cho người dùng / trao quyền kiểm soát cho người / khác | | | |
-| Đường đi của người sau khi có giải pháp (ví dụ: ticket chuyển sang người duyệt → duyệt → khách được trả lời) | | | |
-| Hệ thống học được gì (tín hiệu ghi lại để theo dõi: tên metric trong `monitors.py`) | | | |
+| Vì sao người gặp coi đây là lỗi | MKD đã ký phụ lục v4: bão lũ không ghi lỗi hãng; sổ của họ ghi nguyên nhân bão số 9 | Thông báo chính sách mới nói trễ từ 2 ngày là được hoàn, khách so số tiền / lời từ chối với thông báo | Ops đã thống nhất từ lỗi thứ 3 / hãng / ngày phải có người duyệt; MKD không thấy ai xác nhận |
+| Kiểu giải pháp: phản hồi cho người dùng / trao quyền kiểm soát cho người / khác | **Khác: cổng ngoài model** (đã có ở vòng 1): `pre_guard` ghim `policy_id` theo `helpers.effective_policy`; `_gate_fault` dùng `fault_causes` của bản hiệu lực | **Khác: cổng ngoài model** (đã có ở vòng 1): `_gate_refund` tính lại quyền lợi theo bản hiệu lực | **Trao quyền kiểm soát cho người**: `write_gate` trước `file_carrier_fault`, nếu hãng đã có ≥ 2 lỗi tự động trong ngày thì không tự ghi, để lại cho NV-HANH xác nhận |
+| Đường đi của người sau khi có giải pháp (ví dụ: ticket chuyển sang người duyệt → duyệt → khách được trả lời) | Khách vẫn được hoàn phí ship; không có lỗi ghi cho MKD; NV-OANH không phải gỡ khi đối soát | Khách nhận đúng số theo v4 (ví dụ 47.400đ ở `S3-42`) và lời trả lời khớp thông báo | Khách vẫn được hoàn ngay; lỗi thứ 3+ không vào sổ, sự kiện guard ghi lại → NV-HANH xem cuối ngày, xác nhận thì ghi tay; NV-OANH báo hãng |
+| Hệ thống học được gì (tín hiệu ghi lại để theo dõi: tên metric trong `monitors.py`) | `policy_version_mismatch_rate`: tỉ lệ lần chạy có sự kiện `policy` khác bản hiệu lực theo ngày (đọc trace) | Cùng `policy_version_mismatch_rate` | `max_auto_faults_per_carrier_day`: số lỗi tự động lớn nhất của một hãng trong một ngày (nhóm `faults` theo `day`, `carrier_id`) |
 
 Yêu cầu: ít nhất **hai lỗi có nguồn khác nhau** ở phần 2, và ít nhất một lỗi được xếp đúng là **lỗi chìm**.
 
@@ -233,13 +233,14 @@ Mở lại Phiếu B mục B3. Ghi ở đây những dòng đổi so với vòng
 
 *Mục riêng, không ghi đè HAZOP vòng 1 ở Phiếu B mục B4. Năm guideword và nghĩa của chúng: xem Phiếu B mục B4.*
 
-Tool chọn phân tích: `________________`
+Tool chọn phân tích: `file_carrier_fault` (trên dữ liệu của thẻ S3: `incidents/S3/world_patch.json`, hãng MKD)
 
 | Tham số / dòng dữ liệu | Guideword (WRONG / INVALID / INCOMPLETE / PERTURBED / INCAPABLE) | Lệch cụ thể (mã ticket, trường dữ liệu của thẻ) | Hậu quả, cho ai | Hiện có gì ngăn? | Gate đề xuất + tầng |
 |---|---|---|---|---|---|
-| | | | | | |
-| | | | | | |
-| | | | | | |
+| Chính sách dùng để quyết "có ghi lỗi không" (`fault_causes`) | INVALID | `S3-01@11` base: `policy REFUND-v3, pinned: false` sau ngày REFUND-v4 hiệu lực 2026-12-01; v3 coi `FORCE_MAJEURE` là lỗi hãng, v4 thì không | MKD bị phạt 120.000đ / lỗi cho đơn kẹt bão số 9 | **Đã có (vòng 1)**: `pre_guard` ghim `policy_id` theo `effective_policy`; `_gate_fault` dùng `fault_causes` của bản hiệu lực → `R-S3-prepared`: lỗi oan 35 → 10 | Giữ; thêm chỉ số `policy_version_mismatch_rate` (**phát hiện**) |
+| `delay_cause` của kiện | INCOMPLETE | Kiện có `delay_cause = null` mà trễ > 0 (thẻ: "tracking còn chưa ghi nguyên nhân trễ cũng ghi lỗi"); agent mặc định `CARRIER` | Hãng bị ghi lỗi khi chưa ai xác nhận nguyên nhân | **Đã có (vòng 1)**: `legal.carrier_fault_requires_recorded_cause = true` + `_gate_fault` dùng `carrier_at_fault` (cần cause thuộc `fault_causes`) | Giữ (**chặn**) |
+| Số lỗi đã ghi cho cùng hãng trong ngày | WRONG (giá trị từng lệnh đúng, tổng sai) | `S3-42@11`, `S3-43@11` after: lỗi MKD thứ 3, 4 trong cùng ngày, mỗi lỗi có `cause: CARRIER` hợp lệ, vượt `ops_limits.max_auto_strikes_per_carrier_per_day = 2` | MKD nhận "liền mấy lỗi, không ai xác nhận"; tiến sát ngưỡng đình chỉ 5 lỗi / 7 ngày (`suspend_after_strikes_7d`) | Không có gì | `write_gate` trước `file_carrier_fault`: đếm `fault_rows(carrier_id=...)` trong ngày, ≥ 2 thì `deny` và ghi sự kiện cho NV-HANH xác nhận (**giới hạn thiệt hại**); chỉ số `max_auto_faults_per_carrier_day` (**phát hiện**) |
+| `as_of` (ngày hôm nay) so với `effective_to` của chính sách cuối | INVALID | **Nhánh chưa thấy trên trace:** ngày chạy rơi vào khoảng không có chính sách nào hiệu lực (ví dụ v4 bị đặt `effective_from` lùi lại, hoặc bản v5 ban hành có khoảng hở) thì `effective_policy` trả `None` | Không có căn cứ để quyết tiền / lỗi | Một phần: `pre_guard` khi đó không ghim, agent rơi về cờ `index_active`; `_gate_refund` đã `escalate`, `_gate_fault` đã `deny` khi không tra được chính sách | Thêm: `pre_guard` `escalate` khi không có chính sách hiệu lực (**chặn**, vòng sau) |
 
 Bắt buộc: ít nhất ba dòng, trong đó **một dòng là nhánh bàn chưa thấy trên trace** lúc viết.
 
