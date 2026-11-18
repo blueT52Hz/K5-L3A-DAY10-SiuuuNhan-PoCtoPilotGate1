@@ -345,7 +345,7 @@ Mỗi dòng một tín hiệu. Cột "Lấy ở đâu" phải là một dòng tr
 
 | Tín hiệu | Lấy ở đâu | Bình thường | Ngưỡng VÀNG → việc làm | Ngưỡng ĐỎ → việc làm | Ai quyết |
 |---|---|---|---|---|---|
-| Thời gian chờ người duyệt lâu nhất | Report dòng `hàng chờ người duyệt ... lâu nhất` | 0-20 phút | > 30 phút → NV-HANH báo kênh, gọi thêm người trực (xem Giờ cao điểm) | > 60 phút (`operations.max_queue_wait_minutes`) → thu hẹp phạm vi về một kho | NV-TUNG |
+| Thời gian chờ người duyệt lâu nhất | Report dòng `hàng chờ người duyệt ... lâu nhất` (run `...154108-212f32`: 0 phút, 6 ca/ngày vào hàng chờ gồm kiểm mẫu 10%) | 0-20 phút | > 30 phút → NV-HANH báo kênh, gọi thêm người trực (xem Giờ cao điểm) | > 60 phút (`operations.max_queue_wait_minutes`) → thu hẹp phạm vi về một kho | NV-TUNG |
 | Số ca bị ùn | Report dòng `... ca bị ùn (hạn 60 phút)` | 0 | 1 ca → gọi thêm người trực | ≥ 2 ca trong một ca → thu hẹp phạm vi pilot về một kho (điều kiện dừng 5) | NV-TUNG |
 | Chi phí mỗi ticket so với làm tay | Report dòng `chi phí mỗi ticket ... (làm tay: 10000đ)` | ≤ 5.000đ | > 8.000đ (`cost_per_ticket_vnd_max` đã ký) → xem kho nào đắt trong bảng theo kho | ≥ 10.000đ (đắt hơn làm tay) → cắt kho đó khỏi `business.pilot_scope` | NV-TUNG cùng Product (Nguyễn Ngọc Hiếu) |
 | Tổng tiền hoàn tự động trong ngày so với trần | Report dòng `tổng hoàn tự động một ngày ... trần bàn đặt: 1500000đ` | ≤ 500.000đ | > 1.000.000đ → báo kênh, NV-HANH xem các khoản lớn | Chạm 1.500.000đ (`business.daily_refund_cap_vnd`) → hệ thống tự chuyển khoản tiếp theo cho người duyệt; báo Finance | NV-HANH |
@@ -372,7 +372,7 @@ Lượng ticket có thể dồn gấp ba trong một giờ (ngày sale, sau bão
 | Ai trực giờ cao điểm, mấy người (khớp `operations.reviewers_on_shift`)? | 1 người: Trần Thị Hạnh (`NV-HANH`), đúng `operations.reviewers_on_shift = 1`; người dự bị gọi được: một nhân viên CSKH do NV-HANH chỉ định |
 | Ngưỡng nào thì **gọi thêm người** (hàng chờ bao nhiêu ca, chờ lâu nhất bao nhiêu phút)? Ai gọi? | Hàng chờ ≥ 4 ca cùng lúc **hoặc** chờ lâu nhất > 30 phút → NV-HANH gọi thêm 1 người (nâng `operations.reviewers_on_shift` lên 2, công suất 12 ca / giờ) và báo kênh |
 | Ngưỡng nào thì **thu hẹp** phạm vi (khoá `business.pilot_scope`) hoặc **tắt** một thao tác ghi (`config/switches.json`)? Ai quyết? | Đã 2 người mà vẫn có ca chờ > 60 phút (`max_queue_wait_minutes`), hoặc ≥ 2 ca bị ùn trong ca → NV-TUNG thu hẹp `business.pilot_scope` về một kho (giữ kho có pass_rate và chi phí tốt nhất). LLM trả 429 liên tục (sự kiện `llm_error` tăng) → NV-TUNG tắt `issue_refund` tới khi hết giờ cao điểm |
-| Thêm người thì chi phí mỗi ticket và ROI thay đổi thế nào (đọc report)? | Mỗi người trực thêm tốn 30.000đ phí giữ chỗ / ca (`ops_facts.reviewer_standby_fee_vnd`): với 22 ticket / ngày, thêm 1 người ≈ +1.364đ / ticket, từ ≈ 4.200đ lên ≈ 5.600đ, vẫn dưới trần 8.000đ đã ký; ROI giảm từ ≈ 1,38 xuống ≈ 0,8, vẫn trên 0,25. Thêm 2 người trở lên ở ngày thường là lãng phí; chỉ gọi khi đúng ngưỡng trên |
+| Thêm người thì chi phí mỗi ticket và ROI thay đổi thế nào (đọc report)? | Mỗi người trực thêm tốn 30.000đ phí giữ chỗ / ca (`ops_facts.reviewer_standby_fee_vnd`): với 22 ticket / ngày, thêm 1 người ≈ +1.364đ / ticket, từ 4.456đ (run `R-base-after-20261118-154108-212f32`, đã có ghi chú giải thích và kiểm mẫu 10%) lên ≈ 5.820đ, vẫn dưới trần 8.000đ đã ký; ROI giảm từ 1,24 xuống ≈ 0,72 (tiết kiệm ròng 121.962đ → ≈ 91.962đ / ngày), vẫn trên 0,25. Thêm 2 người trở lên ở ngày thường là lãng phí; chỉ gọi khi đúng ngưỡng trên |
 
 ---
 
