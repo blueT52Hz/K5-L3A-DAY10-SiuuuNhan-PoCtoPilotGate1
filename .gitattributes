@@ -1,0 +1,4 @@
+# Lệnh ký (lab10.criteria sign) băm nguyên byte của file tiêu chí.
+# Không để Git đổi LF <-> CRLF trên Windows, nếu không hash sẽ lệch giữa các máy và với team chấm.
+config/acceptance_criteria.json -text
+config/acceptance_criteria.lock -text
