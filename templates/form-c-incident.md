@@ -359,23 +359,27 @@ Thẻ S5 dùng mục này cho một con số kinh doanh: chi phí mỗi ticket t
 
 <a id="c9"></a>
 
-## C9 · Câu 3.7 · Fault tree SAU khi sửa (mã lần chạy: `__________`)
+## C9 · Câu 3.7 · Fault tree SAU khi sửa (mã lần chạy: `R-S3-after-20261118-163827-ffb0c6` · grade `R-S3-grade-20261118-163826-ffb0c6`)
 
 Vẽ lại cây ở C6. Ở mỗi nhánh đã xử lý, thêm một nút `VÀ [gate … hỏng]` và ghi:
 
 ```
-[ĐỈNH] ______________________________
+[ĐỈNH] MKD (và hãng khác) bị ghi lỗi oan: wrongful_carrier_faults trên S3 = 35 (base) → 10 (prepared) → 0 (after)
  └─ HOẶC
- ├─ [1] ______________ VÀ [gate ______ hỏng]
- ├─ [2] ______________ VÀ [gate ______ hỏng]
- └─ [3] ______________ (còn hở?)
+ ├─ [1] Dùng chính sách sai phiên bản            VÀ [gate pre_guard ghim effective_policy hỏng
+ │                                                     HOẶC effective_from/to do pháp chế nhập sai]
+ ├─ [2] Ghi lỗi khi delay_cause trống / không    VÀ [gate _gate_fault (carrier_at_fault) hỏng
+ │      thuộc fault_causes                             VÀ legal.carrier_fault_requires_recorded_cause tắt]
+ └─ [3] Ghi quá 2 lỗi tự động / hãng / ngày      VÀ [Cổng 4 _gate_fault (fault_strike_cap) hỏng]
+        (còn hở: 2 lỗi đầu trong ngày vẫn tự ghi; nếu tracking ghi sai cause CARRIER thì 2 lỗi đó oan mà không gate nào thấy;
+         cửa sổ 7 ngày (đình chỉ sau 5 lỗi) chưa có gate)
 ```
 
 | Nhánh | Gate (hàm trong `guards.py` / khoá config / metric trong `monitors.py`) | Tầng gate (phát hiện / chặn / giới hạn thiệt hại / vận hành) | Giảm hay ngăn? Vì sao | Nhánh còn hở |
 |---|---|---|---|---|
-| [1] | | | | |
-| [2] | | | | |
-| [3] | | | | |
+| [1] | `pre_guard` (ghim `policy_id` theo `helpers.effective_policy`); `_gate_refund`, `_gate_fault` dùng bản hiệu lực; điều kiện dừng "chính sách lệch ngày hiệu lực" trong `operations.stop_conditions`; chỉ số `fault_gate_block_rate` | Chặn + vận hành + phát hiện | **NGĂN** khi `effective_from/to` đúng: cờ `index_active` không còn được đọc ở bất kỳ lệnh ghi nào | Còn hở nếu chính `effective_from/to` nhập sai, hoặc không có bản nào hiệu lực (C4 dòng 4: `pre_guard` khi đó chưa `escalate`) |
+| [2] | `_gate_fault` (`helpers.carrier_at_fault`) + `legal.carrier_fault_requires_recorded_cause = true` (cổng của host) | Chặn (hai lớp độc lập: code của bàn và cổng pháp lý trong `tools.py`) | **NGĂN**: phải cả hai lớp cùng hỏng thì lỗi không nguyên nhân mới lọt | Không còn trên dữ liệu thẻ; còn rủi ro điều phối ghi bừa `CARRIER` cho kiện chưa rõ nguyên nhân |
+| [3] | Cổng 4 trong `_gate_fault` (`ops_limits.max_auto_strikes_per_carrier_per_day`); điều kiện dừng "hãng đã có 2 lỗi tự động trong ngày"; chỉ số `max_auto_faults_per_carrier_day` (vàng = 2, đỏ > 2) | Giới hạn thiệt hại + vận hành + phát hiện | **NGĂN** lỗi thứ 3+ trong ngày; **GIẢM** tác hại tổng (vẫn 2 lỗi / hãng / ngày tự ghi) | 2 lỗi đầu mỗi ngày; cửa sổ 7 ngày (`suspend_after_strikes_7d`); NV-HANH không xác nhận kịp cuối ca |
 
 ---
 
@@ -385,7 +389,8 @@ Vẽ lại cây ở C6. Ở mỗi nhánh đã xử lý, thêm một nút `VÀ [g
 
 | Rủi ro | Khả năng | Tác động | Người phụ trách (PIC, một người) | Dấu hiệu (metric nào, ngưỡng nào) | Xử lý | Ảnh hưởng bước đánh giá | Nhóm chức năng (GOVERN / MAP / MEASURE / MANAGE) |
 |---|---|---|---|---|---|---|---|
-| | | | | | | | |
+| Ngày bão / cao điểm, một hãng nhỏ (MKD, GHSH, DNB) bị dồn lỗi tự động: mỗi ngày 2 lỗi "đúng nguyên nhân" vẫn được tự ghi, cộng 7 ngày chạm ngưỡng đình chỉ (MKD 5, GHSH / DNB 3 lỗi / 7 ngày) dù không ngày nào vượt trần | Vừa (mùa bão miền Trung, miền Tây tháng 10-12) | Cao: hãng bị đình chỉ, mất tuyến; bên thứ ba khiếu nại; vi phạm phụ lục đã ký | Lê Thanh Tùng (`NV-TUNG`) | `max_auto_faults_per_carrier_day` = 2 hai ngày liên tiếp cho cùng một hãng (vàng); `fault_gate_block_rate` > 30% / ngày (đỏ) | Ngày thứ 2 liên tiếp chạm trần: chuyển mọi lỗi của hãng đó sang NV-HANH xác nhận (tắt tự ghi cho riêng hãng); NV-OANH báo hãng; vòng sau thêm cổng cửa sổ 7 ngày | Nếu xảy ra trong pilot: chặn chọn "Tiếp tục" ở Bước đánh giá 2 tới khi có cổng 7 ngày | MANAGE |
+| Chính sách mới (REFUND-v5 hoặc phụ lục hãng) ban hành mà `effective_from/to` nhập sai hoặc có khoảng hở ngày | Thấp-vừa (mỗi lần đổi chính sách) | Cao: toàn bộ tiền hoàn và lỗi hãng tính theo bản sai | Nguyễn Ngọc Hiếu (Product) | `fault_gate_block_rate` tăng đột biến ngày đổi chính sách; sự kiện `policy` trong trace khác bản pháp chế công bố | Pháp chế ký xác nhận `effective_from/to` trước ngày hiệu lực; chạy lại bộ nền + gói S3 ngày đổi | Quyết định lại tiêu chí ngày 2026-11-30 (đã hẹn ở Phiếu A) | GOVERN |
 
 Quy tắc: **mỗi dòng phải đổi được một quyết định.** Cột "Dấu hiệu" phải là một metric có trong `monitors.py` hoặc trong report.
 
@@ -401,26 +406,33 @@ Ghi các dòng đổi sau sự cố. Mỗi dòng vẫn phải có một PIC có 
 
 | # nhóm | Trạng thái mới (Xong / Chưa / Không áp dụng) | Bằng chứng mới (mã lần chạy, mục phiếu, số trong report) | PIC |
 |---|---|---|---|
-| | | | |
-| | | | |
+| 1 Chất lượng | Xong | Bộ nền `R-base-after-20261118-163511-3dda89` và S3 `R-S3-after-20261118-163827-ffb0c6`: 3 ngưỡng an toàn = 0, pass_rate 1,0 | Khổng Tiến Dương |
+| 2 Dữ liệu | Xong (trên dữ liệu lab) | C3.5: `effective_from/to` là nguồn sự thật, `index_active` là bản sao đã lệch; `pre_guard` không còn đọc cờ | Nguyễn Ngọc Hiếu |
+| 3 Bảo mật | Xong | Behavioral test B7.3 (cài lệnh "bỏ qua chính sách" bị `modify` về đúng chính sách) | Khổng Tiến Dương |
+| 4 Quyền hạn | Xong | Cổng 1, 1b, 3, 4 trong `lab10/guards.py`; `switches.json` 4 công tắc, người giữ NV-TUNG | Nguyễn Hoa Thanh Tùng |
+| 5 Hiệu năng, hạ tầng | Chưa | Gói S3 không thử LLM 429; nhánh fail-open mới chặn trên code, chưa thấy trên trace | Nguyễn Quang Duy |
+| 6 Chi phí | Xong | S3 after: 4.405đ / ticket, ROI 1,27; bộ nền 4.456đ, ROI 1,24; `business` giữ nguyên (C7) | Nguyễn Ngọc Hiếu |
+| 7 Vận hành | Xong | `operations` thêm 2 điều kiện dừng; 2 chỉ số mới trong `monitors.py` (`monitor ✅`); runbook 4-5 dưới đây | Nguyễn Hoa Thanh Tùng |
+| 8 Con người, pháp lý | Xong một phần | Lỗi oan cho bên thứ ba 35 → 0 trên S3; còn hở cửa sổ 7 ngày (risk register C10) | Nguyễn Hoa Thanh Tùng |
+| 9 Quyết định | Xong | Tiêu chí hash `dfd90ea3` không đổi; v1 (B8), v2 (C12) | Nguyễn Ngọc Hiếu |
 
 ### Runbook 4 · Sau sự cố trên thẻ (vòng 2)
 
 | Câu hỏi | Trả lời |
 |---|---|
-| Tín hiệu nào ở Runbook 2 (Phiếu B mục B7.5) lẽ ra phải báo trước sự cố này? Nó đã có chưa? | |
-| Bàn thêm hoặc đổi ngưỡng nào, từ bao nhiêu thành bao nhiêu? | |
-| Bàn đổi gì về **người** (số người trực, ai đứng tên, ai được gọi)? | |
-| Bàn đổi gì về **phạm vi** hoặc **quy trình** (kiểm mẫu, ghi chú giải thích, trần)? | |
-| Nói gì với bên thứ ba bị ảnh hưởng (hãng, shop, người nhận, nhân viên duyệt), ai nói, trong bao lâu? | |
-| Dữ liệu cá nhân nào đã rời hệ thống mà không thu hồi được? Báo cho ai? | |
-| Sự cố lộ ra trước qua số máy đo, phản hồi của người, hay đọc nội dung? Nguồn nào bàn chưa có? | |
+| Tín hiệu nào ở Runbook 2 (Phiếu B mục B7.5) lẽ ra phải báo trước sự cố này? Nó đã có chưa? | Dòng "Lỗi ghi oan cho hãng / lộ dữ liệu cá nhân": có (đỏ khi ≥ 1 lỗi oan), nhưng chỉ đo được khi có nhãn / khiếu nại. Tín hiệu báo **trước** là "số lỗi tự động / hãng / ngày" (telemetry câu 1.4, vàng khi chạm 2) và "chính sách đang dùng khác bản hiệu lực" (B3): đã viết trên giấy nhưng **chưa có chỉ số chạy được**; nay có `max_auto_faults_per_carrier_day`, `fault_gate_block_rate` |
+| Bàn thêm hoặc đổi ngưỡng nào, từ bao nhiêu thành bao nhiêu? | Thêm vào Runbook 2: `max_auto_faults_per_carrier_day` vàng = 2, đỏ > 2 (trước: không có); `fault_gate_block_rate` vàng > 10%, đỏ > 30% / ngày (trước: không có). Ngưỡng trong Bản tiêu chí đã ký giữ nguyên |
+| Bàn đổi gì về **người** (số người trực, ai đứng tên, ai được gọi)? | Giữ 1 người trực (S3: 2 ca / ngày vào hàng chờ, chờ 0 phút). Thêm việc cho NV-HANH: cuối ca xác nhận các lỗi hãng bị Cổng 4 giữ lại (sự kiện `fault_strike_cap`); NV-OANH báo hãng trong ngày; NV-TUNG giữ quyền tắt `file_carrier_fault` khi chính sách lệch ngày hiệu lực |
+| Bàn đổi gì về **phạm vi** hoặc **quy trình** (kiểm mẫu, ghi chú giải thích, trần)? | Phạm vi giữ `all` (không cắt kho CT / DN vì nguyên nhân không nằm ở kho). Quy trình: thêm 2 dòng `operations.stop_conditions` (trần lỗi / hãng / ngày; chính sách lệch ngày hiệu lực); trần lỗi tự động lấy từ `ops_limits` (2 / hãng / ngày); kiểm mẫu 10% và ghi chú giải thích giữ nguyên |
+| Nói gì với bên thứ ba bị ảnh hưởng (hãng, shop, người nhận, nhân viên duyệt), ai nói, trong bao lâu? | NV-OANH gửi MKD trong 24 giờ: xác nhận các lỗi ghi sau 01/12 cho đơn kẹt bão số 9 và đơn chưa ghi nguyên nhân là ghi sai, gỡ khỏi sổ lỗi, hoàn 120.000đ / lỗi đã phạt; cam kết từ lỗi thứ 3 / ngày có người LogiX xác nhận. NV-HANH báo CSKH: khách trễ 2 ngày từ 01/12 được hoàn phí ship theo v4, liên hệ lại các khách đã bị từ chối |
+| Dữ liệu cá nhân nào đã rời hệ thống mà không thu hồi được? Báo cho ai? | Không có trên gói S3 (`pii_leaks = 0` ở cả 3 mốc). Ở mốc base, `customer_note` (chữ khách viết) đã gửi cho hãng ở mọi thông báo; không chứa số điện thoại / tên trong các ticket thẻ, nên không cần báo, nhưng đã chặn từ vòng 1 (Cổng 3 + `legal.pii_fields_blocked_to_third_party`) |
+| Sự cố lộ ra trước qua số máy đo, phản hồi của người, hay đọc nội dung? Nguồn nào bàn chưa có? | Lộ ra qua **phản hồi của người** (tin Zalo của điều phối MKD, ghi chú CSKH), không qua số máy đo. Nguồn còn thiếu: chỉ số theo dõi số lỗi / hãng / ngày và theo 7 ngày (nay có bản theo ngày), kênh nhận khiếu nại của hãng nối thẳng vào `#logix-hoantien-pilot-canhbao` |
 
 ### Runbook 5 · Ba kịch bản "nếu … thì …" cho tuần đầu chạy thử thật
 
-1. Nếu số ticket tăng gấp ___ lần trong một giờ thì: …
-2. Nếu nhà cung cấp LLM lỗi quá ___ phút thì: …
-3. Nếu người duyệt báo không tin một quyết định của trợ lý thì: …
+1. Nếu số ticket tăng gấp **3** lần trong một giờ thì: NV-HANH xem hàng chờ; ≥ 4 ca chờ cùng lúc hoặc chờ lâu nhất > 30 phút thì gọi thêm 1 người (`operations.reviewers_on_shift` = 2, chi phí ≈ +1.364đ / ticket, ROI vẫn > 0,25); vẫn có ca chờ > 60 phút thì NV-TUNG thu hẹp `business.pilot_scope` về một kho; nếu đồng thời một hãng chạm 2 lỗi / ngày (`max_auto_faults_per_carrier_day`) thì mọi lỗi tiếp theo của hãng đó chờ NV-HANH xác nhận.
+2. Nếu nhà cung cấp LLM lỗi quá **15** phút thì: NV-TUNG tắt `issue_refund` trong `config/switches.json` (agent tự chuyển người, không hoàn kiểu fail-open); ticket vào hàng chờ CSKH làm tay; bật lại khi LLM ổn định 15 phút và chạy lại bộ nền không có ca mới hỏng.
+3. Nếu người duyệt báo không tin một quyết định của trợ lý thì: NV-HANH ghi mã ticket vào `#logix-hoantien-pilot-canhbao`, đọc dòng ghi chú giải thích (`decision_note`: số ngày trễ theo tracking, chính sách áp dụng); nếu quyết định sai thì NV-TUNG chạy `lab10.trace` trên ticket đó, tạm nâng `operations.review_sampling_pct` từ 10% lên 30% trong 3 ngày, và đưa ticket vào bộ thử của vòng sau.
 
 ---
 
