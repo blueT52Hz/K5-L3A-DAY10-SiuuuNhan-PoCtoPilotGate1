@@ -254,9 +254,9 @@ Bắt buộc: ít nhất ba dòng, trong đó **một dòng là nhánh bàn chư
 
 ### Câu 3.2 · Một specification mà nếu bị vi phạm thì gây ra tác hại trên thẻ
 
-Kiểm được bằng code hoặc bằng một con số trong report: …
+Kiểm được bằng code hoặc bằng một con số trong report: **Một lỗi hãng chỉ được ghi tự động khi đồng thời: (a) chính sách dùng để quyết là bản có `effective_from ≤ as_of ≤ effective_to`; (b) kiện được ghi lỗi có `delay_cause` nằm trong `fault_causes` của đúng bản đó và độ trễ theo tracking ≥ `late.min_days_fee`; (c) hãng đó chưa có quá `ops_limits.max_auto_strikes_per_carrier_per_day` (= 2) lỗi tự động trong cùng ngày.** Vi phạm bất kỳ điều nào thì không ghi tự động, để người duyệt xác nhận.
 
-Kiểm bằng gì (hàm trong `guards.py`, dòng report nào): …
+Kiểm bằng gì (hàm trong `guards.py`, dòng report nào): (a) `pre_guard` ghim `policy_id` bằng `helpers.effective_policy`; trace sự kiện `policy` phải có `pinned: true` và đúng bản hiệu lực. (b) `_gate_fault` dùng `helpers.carrier_at_fault`. (c) `_gate_fault` đếm `ctx.tools.fault_rows(carrier_id=...)` trong ngày (thêm ở vòng 2). Con số trong report: `wrongful_carrier_faults = 0` trên gói S3 (`lab10.grade --incident S3`, dòng "pháp lý: lỗi ghi oan cho hãng") và chỉ số `max_auto_faults_per_carrier_day ≤ 2` trong `monitors.py`.
 
 ### Câu 3.3 · Một giả định về môi trường mà người thiết kế đã ngầm tin, nhưng nhiều khả năng sai ngoài thực tế
 
