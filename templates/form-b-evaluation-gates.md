@@ -394,7 +394,7 @@ bao nhiêu thời gian? (3) Có phần nào của dự án không nên làm ti�
 
 | | **v1** (phút 105–115, TRƯỚC khi nhận thẻ sự cố) |
 |---|---|
-| Commit ký tiêu chí (message `Sign acceptance criteria`; hash commit, tuỳ chọn) | |
+| Commit ký tiêu chí (message `Sign acceptance criteria`; hash commit, tuỳ chọn) | `7f20afc` (ký lúc 2026-11-18T16:16:36, hash tiêu chí `a8da1f73…`) |
 | Hash chốt cổng vòng 1 (8 ký tự lệnh `lab10.checkpoint` in ra, tuỳ chọn) | |
 | Mã lần chạy dùng làm bằng chứng | bộ nền, mốc base: ________ · bộ nền với cổng vòng 1 (prepared): ________ |
 | Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | |
@@ -407,8 +407,8 @@ bao nhiêu thời gian? (3) Có phần nào của dự án không nên làm ti�
 | Nếu Thu hẹp: cắt phần nào, vì sao | |
 | Nếu Cải tiến thêm: giả thuyết cụ thể + hạn | |
 | Nếu Dừng: bài học ghi lại | |
-| Một bằng chứng còn thiếu (thứ bộ nền chưa đo được) | |
-| Ngày quyết định lại (trừ khi Dừng) | |
+| Một bằng chứng còn thiếu (thứ bộ nền chưa đo được) | (1) Hành vi sau 01/12/2026: bộ nền chỉ có ca theo REFUND-v3 (`as_of` 16/11/2026), chưa có ca nào theo REFUND-v4 (ngưỡng trễ 2 ngày, hạn mức tự hoàn 100.000đ, bỏ FORCE_MAJEURE khỏi lỗi hãng). (2) Chi phí LLM thật và công suất duyệt thật: `ops_facts` là số mock (6 ca/giờ/người, 10.000đ/ca làm tay). (3) Đơn nhiều kiện và tracking thiếu nguyên nhân: dữ liệu chỉ có 1/25 đơn hai kiện và 5/26 kiện không có `delay_cause`. |
+| Ngày quyết định lại (trừ khi Dừng) | 2026-11-30, trước khi REFUND-v4 có hiệu lực 01/12/2026 (khớp "Ngày xem lại tiêu chí" ở Phiếu A mục A4) |
 | PIC ký | |
 
 Xong v1 thì lưu và đẩy một bản (sau mốc này không sửa cột v1):
