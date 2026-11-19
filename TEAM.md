@@ -59,6 +59,60 @@ Học được: cổng con số và quy trình người (điều kiện dừng, 
 
 Còn chưa chắc: người duyệt có kịp xử lý các ca trợ lý chuyển sang khi lượng việc tăng gấp ba, vì chưa có số hàng chờ thật từ report.
 
+## NguyenQuangDuy-2A202603462
+
+### Phần việc phụ trách
+
+Vai **Kỹ sư cổng B** (TV3: trace, behavioral test, chỉ số theo dõi).
+
+- Phiếu B: câu 2.2 (B2, bảng soát lỗi `T-002@55`), câu 2.7 (B7.2, hai bước tránh rò rỉ dữ liệu), câu 2.8 (B7.3, behavioral test, làm cùng TV4).
+- Theo phân công còn có: câu 1.5 (A3), Phiếu C C0-C2, C4, C6, C8 và `lab10/monitors.py`; các phần này được trưởng nhóm làm thay sáng 19/11 để kịp hạn (xem mục của NguyenHoaThanhTung-2A202603519).
+
+### Đóng góp cụ thể
+
+- Dò trace `T-002@55`, điền bảng soát lỗi B2 (lỗi, ai chịu, loại lỗi, nguồn, hướng xử lý).
+- Viết hai bước tránh rò rỉ dữ liệu khi chỉnh cổng trên bộ nền (B7.2).
+- Viết B7.3 (tính chất và ticket hiểm cho behavioral test); Hiếu sửa lại câu tính chất sau đó (`8e95766`).
+- Merge thay đổi của bàn vào `main` hai lần.
+
+### Bằng chứng
+
+- Commit: `9168e08` (B2), `fea0d44` (merge), `79d9674` (B7.2, B7.3), `461f834` (merge).
+- Dòng trong phiếu: B2, B7.2, B7.3.
+
+### Sử dụng AI
+
+*(Duy tự điền: đã dùng AI cho việc gì.)*
+
+### Exit ticket
+
+*(Duy tự điền: một điều học được, một điều còn chưa chắc.)*
+
+## KhongTienDuong-2A202603467
+
+### Phần việc phụ trách
+
+Vai **Kỹ sư cổng A** (TV2: viết cổng trong `lab10/guards.py`).
+
+- Theo phân công: câu 1.3 (A2 cột Offline), câu 2.1 (B0, B1, chạy mốc base), câu 2.6 (B7.1, cổng vòng 1), chốt cổng vòng 1 (lệnh 5), câu 3.5 phần code (C7).
+- Trên nhánh `main` không có commit nào của tài khoản `khongtienduongcv-byte`; nhánh `origin/duong` không có commit riêng. Các phần trên được trưởng nhóm làm thay sáng 19/11 (xem mục của NguyenHoaThanhTung-2A202603519).
+
+### Đóng góp cụ thể
+
+*(Dương tự điền nếu có đóng góp ngoài git: thảo luận, pre-mortem, demo, phản biện.)*
+
+### Bằng chứng
+
+- Commit: không có trên `main` tính tới 2026-11-19 11:15.
+
+### Sử dụng AI
+
+*(Dương tự điền.)*
+
+### Exit ticket
+
+*(Dương tự điền: một điều học được, một điều còn chưa chắc.)*
+
 ## NguyenNgocHieu-2A202603502
 
 ### Phần việc phụ trách
