@@ -35,6 +35,8 @@ CỔNG VÒNG 1 CỦA BÀN SIUUUNHAN (mỗi cổng ứng với một dòng pre-mo
   Cổng 1b (lỗi hãng)  file_carrier_fault: chỉ ghi khi tracking cho thấy hãng có lỗi theo chính sách, và ghi đúng kiện.
   Cổng 3 (pháp lý)    notify_carrier: chỉ gửi các trường có trong carrier_notice_fields của chính sách.
 Cổng 2 (trần tiền ngày) là con số trong config/operating_gates.json, không cần code.
+VÒNG 2 (thẻ S3):
+  Cổng 4 (lỗi hãng)   file_carrier_fault: không tự ghi quá ops_limits.max_auto_strikes_per_carrier_per_day lỗi / hãng / ngày.
 """
 from . import helpers as H  # noqa: F401
 from .tools import Verdict
@@ -106,6 +108,14 @@ def _gate_fault(ctx, action):
         ctx.log("fault_blocked", order_id=order["order_id"], parcel_id=parcel["parcel_id"],
                 db_delay_days=delay, cause=parcel.get("delay_cause"))
         return Verdict.deny("tracking không cho thấy hãng có lỗi theo chính sách: không ghi lỗi")
+    # Cổng 4 (vòng 2, thẻ S3): trần lỗi TỰ ĐỘNG mỗi hãng mỗi ngày đã thống nhất với Ops. Từ lỗi vượt trần trở đi
+    # không tự ghi; khách vẫn được hoàn, lỗi để người duyệt (NV-HANH) xác nhận. Thế giới mỗi lần chạy = một ngày.
+    cap = ctx.tools.ops_limits().get("max_auto_strikes_per_carrier_per_day")
+    already = len(ctx.tools.fault_rows(carrier_id=parcel["carrier_id"]))
+    if cap is not None and already >= cap:
+        ctx.log("fault_strike_cap", carrier_id=parcel["carrier_id"], already_today=already, cap=cap,
+                order_id=order["order_id"], parcel_id=parcel["parcel_id"])
+        return Verdict.deny(f"hãng {parcel['carrier_id']} đã có {already} lỗi tự động trong ngày (trần {cap}): chờ người duyệt xác nhận")
     fixed = {"parcel_id": parcel["parcel_id"], "carrier_id": parcel["carrier_id"],
              "driver_id": parcel.get("driver_id"), "delay_days": delay}
     if any(action.get(k) != v for k, v in fixed.items()):
