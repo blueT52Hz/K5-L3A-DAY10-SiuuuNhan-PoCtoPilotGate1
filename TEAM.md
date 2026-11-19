@@ -24,23 +24,38 @@ Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, k
 
 Mỗi thành viên tự viết một mục bên dưới (chép mẫu, đổi tiêu đề thành họ tên không dấu và MSSV, ví dụ `## NguyenVanAn-20241234`).
 
-## HoVaTen-MSSV
+## NguyenHoaThanhTung-2A202603519
 
 ### Phần việc phụ trách
 
-Vai trong bàn; câu nào của đề, mục nào của phiếu A/B/C, file nào (`lab10/guards.py`, `config/operating_gates.json`, …).
+Trưởng nhóm, vai **Vận hành và pháp lý** (TV1), giữ git của bàn.
+
+- Phiếu A: câu 1.2 (A1, mục tiêu của chị Oanh và chị Hạnh), câu 1.4 (A2 cột Telemetry production).
+- Phiếu B: câu 2.4 (B4 HAZOP vòng 1, B5 checklist 9 nhóm việc), câu 2.5 ghi pre-mortem (B6, các lăng kính Kỹ thuật, Con người và vận hành, Pháp lý), câu 2.10 (B7.5 runbook 1-3, B7.6 giờ cao điểm). File: `config/operating_gates.json` mục `operations`, `legal`.
+- Phiếu C: phần riêng của thẻ, câu 3.3, câu 3.7 (C9-C11, runbook 4-5) *(sẽ làm ở vòng 2)*. File: `submission/submission.json` *(sẽ làm)*.
 
 ### Đóng góp cụ thể
 
-...
+- Tạo repo, mời thành viên, gắn `upstream`, đặt danh tính Git; điền bảng thành viên.
+- Cổng `operations`: PIC `NV-TUNG`, người duyệt `NV-HANH`, 1 người trực, 6 ca/giờ, chờ tối đa 60 phút, 5 điều kiện dừng khớp `stop_condition` đã ký, kênh báo tin `#logix-hoantien-pilot-canhbao`, ghi chú giải thích, kiểm mẫu 10%. Cổng `legal`: chặn `recipient_contact`, `customer_note` khi gửi hãng; chỉ ghi lỗi hãng khi tracking có nguyên nhân.
+- HAZOP vòng 1 trên `file_carrier_fault` (5 guideword, 4 dòng ngoài kỹ thuật); checklist 9 nhóm việc, mỗi dòng một PIC có tên.
+- Runbook 1-3 và giờ cao điểm dùng đúng ngưỡng đã ký (chi phí ≤ 5.000đ, ROI ≥ 0,5, dừng trong 15 phút do NV-TUNG bấm).
 
 ### Bằng chứng
 
-Mã commit, mã lần chạy (`runs/<mã>`), dòng trong phiếu.
+- Commit: `20f0284` (bảng thành viên), `19e6c35` b5 (câu 1.2), `a2a0d9c` b7 (câu 1.4), `8feb6f3` b15 (B4, B5), `0d8d575` b16 (B6), `b8c40a4` b21 (`operations`, `legal`, runbook 1-3, giờ cao điểm).
+- Mã lần chạy (`runs/<mã>`): *(bổ sung khi có: base, prepared, after)*.
+- Dòng trong phiếu: A1 câu 1.2, A2 cột Telemetry; B4, B5, B6, B7.5, B7.6.
+
+### Sử dụng AI
+
+Dùng Claude Code để đọc đề và code của lab, nháp câu chữ cho câu 1.2, 1.4, HAZOP, checklist, pre-mortem, runbook, và chạy lệnh git. Mọi con số trong `operations` lấy từ `data/world.json` (`ops_limits`, `ops_facts`, `staff`) và từ tiêu chí đã ký; mình đã đọc lại và chịu trách nhiệm giải thích lúc demo.
 
 ### Exit ticket
 
-Một điều học được, một điều còn chưa chắc.
+Học được: cổng con số và quy trình người (điều kiện dừng, ai bấm công tắc, trong bao nhiêu phút) quan trọng ngang cổng code; runbook phải dùng đúng số trong config và tiêu chí đã ký.
+
+Còn chưa chắc: người duyệt có kịp xử lý các ca trợ lý chuyển sang khi lượng việc tăng gấp ba, vì chưa có số hàng chờ thật từ report.
 
 ## NguyenNgocHieu-2A202603502
 
