@@ -38,7 +38,7 @@ git commit -m "LAB 10: bài nộp"
 git push -u origin main
 ```
 
-Link gửi đi là URL repo của bàn, ví dụ `https://github.com/<tài-khoản>/K5-L3A-DAY10-XXX-PoCtoPilotGate1`. Team chấm cần đã được mời vào repo (README mục 2, bước 1). **Mỗi thành viên** tự nộp link này trên LMS trước deadline (GMT+7, xem [`SUBMISSION.md`](../SUBMISSION.md#deadline-gmt7)). Không push lên repo mẫu.
+Link gửi đi là URL repo của bàn, ví dụ `https://github.com/<tài-khoản>/K5-L3A-DAY10-XXX-PoCtoPilotGate1`. Repo phải ở chế độ **Public** để team chấm mở được link (README mục 2, bước 1). **Mỗi thành viên** tự nộp link này trên LMS trước deadline (GMT+7, xem [`SUBMISSION.md`](../SUBMISSION.md#deadline-gmt7)). Không push lên repo mẫu.
 
 
 ## Bài nộp gồm gì
