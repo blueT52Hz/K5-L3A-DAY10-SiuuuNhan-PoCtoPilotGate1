@@ -32,7 +32,8 @@ Trưởng nhóm, vai **Vận hành và pháp lý** (TV1), giữ git của bàn.
 
 - Phiếu A: câu 1.2 (A1, mục tiêu của chị Oanh và chị Hạnh), câu 1.4 (A2 cột Telemetry production).
 - Phiếu B: câu 2.4 (B4 HAZOP vòng 1, B5 checklist 9 nhóm việc), câu 2.5 ghi pre-mortem (B6, các lăng kính Kỹ thuật, Con người và vận hành, Pháp lý), câu 2.10 (B7.5 runbook 1-3, B7.6 giờ cao điểm). File: `config/operating_gates.json` mục `operations`, `legal`.
-- Phiếu C: phần riêng của thẻ, câu 3.3, câu 3.7 (C9-C11, runbook 4-5) *(sẽ làm ở vòng 2)*. File: `submission/submission.json` *(sẽ làm)*.
+- Phiếu C: phần riêng của thẻ, câu 3.3, câu 3.7 (C9-C11, runbook 4-5). File: `submission/submission.json`.
+- Làm thêm phần việc còn trống của Kỹ sư cổng ở buổi sáng 19/11 để kịp hạn: chạy mốc base (B0, B1), câu 1.3, 1.5, cổng vòng 1 trong `lab10/guards.py` (B7.1), chốt vòng 1, mốc prepared và quyết định v1 (B8, phần còn trống), kéo thẻ S3, Phiếu C còn lại (C0-C2, C4-C8, C12), Cổng 4 vòng 2, chỉ số theo dõi trong `lab10/monitors.py`, lệnh 7.
 
 ### Đóng góp cụ thể
 
@@ -44,8 +45,9 @@ Trưởng nhóm, vai **Vận hành và pháp lý** (TV1), giữ git của bàn.
 ### Bằng chứng
 
 - Commit: `20f0284` (bảng thành viên), `19e6c35` b5 (câu 1.2), `a2a0d9c` b7 (câu 1.4), `8feb6f3` b15 (B4, B5), `0d8d575` b16 (B6), `b8c40a4` b21 (`operations`, `legal`, runbook 1-3, giờ cao điểm).
-- Mã lần chạy (`runs/<mã>`): *(bổ sung khi có: base, prepared, after)*.
-- Dòng trong phiếu: A1 câu 1.2, A2 cột Telemetry; B4, B5, B6, B7.5, B7.6.
+- Commit ngày 19/11: `46f34f0` b17 (cổng vòng 1), `79085d1` b22 (chốt vòng 1, hash `04f5e8a3`), `30019a3`, `5f9c819` (câu 1.3, 1.5, B0, B1, B7.1, B8), `0465f8e` b25 (thẻ S3), `293d156` b32 (Cổng 4), `d4341a0` b34, `4d5fb71` b35 (`monitors.py`), các commit Phiếu C và bài nộp.
+- Mã lần chạy (`runs/<mã>`): base `R-base-before-20261119-110440-cccac5`, prepared `R-base-prepared-20261119-110504-096b9e`; thẻ S3 grade `R-S3-grade-20261119-110757-1b7ad5` (PASS-VISIBLE).
+- Dòng trong phiếu: A1 câu 1.2, A2; A3; B0, B1, B4, B5, B6, B7.1, B7.5, B7.6, B8; Phiếu C.
 
 ### Sử dụng AI
 

@@ -1,12 +1,17 @@
 {
-  "team": "",
-  "members": [],
-  "incident": "",
-  "decision_v1": "",
-  "decision_v2": "",
+  "team": "K5-L3A-DAY10-SiuuuNhan-PoCtoPilotGate1",
+  "members": [
+    "NguyenHoaThanhTung-2A202603519",
+    "KhongTienDuong-2A202603467",
+    "NguyenQuangDuy-2A202603462",
+    "NguyenNgocHieu-2A202603502"
+  ],
+  "incident": "S3",
+  "decision_v1": "Cải tiến thêm",
+  "decision_v2": "Tiếp tục",
   "three_lines": {
-    "environment_assumption": "",
-    "reduce_or_prevent": "",
-    "measure_in_pilot": ""
+    "environment_assumption": "Cổng của đội tin rằng ngày hiệu lực của chính sách (effective_from/to) do pháp chế nhập luôn đúng và nguyên nhân trễ (delay_cause) do điều phối nhập là thật; thẻ S3 cho thấy dữ liệu nhập tay đã lệch một lần (cờ index_active còn trỏ REFUND-v3 sau 01/12), nên nếu chính hai trường này sai thì cổng vẫn ghi lỗi oan mà không biết.",
+    "reduce_or_prevent": "NGĂN với hai nhánh dùng chính sách sai phiên bản và ghi lỗi không có nguyên nhân (lỗi oan trên S3 từ 35 về 0, hoàn sai từ 900.000đ về 0đ, hai lớp chặn độc lập là code và cổng pháp lý), nhưng chỉ GIẢM với nhánh dồn lỗi cho một hãng: trần 2 lỗi tự động mỗi hãng mỗi ngày vẫn cho 2 lỗi đầu tự ghi và chưa có cổng cho cửa sổ 7 ngày (MKD bị đình chỉ sau 5 lỗi / 7 ngày).",
+    "measure_in_pilot": "Đo lại tỉ lệ kiện có delay_cause trống hoặc ghi muộn so với lúc khách gửi yêu cầu, số lỗi tự động mỗi hãng mỗi ngày và theo 7 ngày (max_auto_faults_per_carrier_day) trong mùa bão, số khiếu nại lỗi oan thật từ hãng, và hành vi khi LLM trả 429 ở giờ cao điểm (tỉ lệ fail-open bị chặn, thời gian chờ người duyệt), vì bộ thử hôm nay không có lỗi LLM và mỗi hãng chỉ vài kiện mỗi ngày."
   }
 }
