@@ -1,0 +1,32 @@
+{
+  "_huong_dan": "Cổng kinh doanh, vận hành, pháp lý mà trợ lý PHẢI tuân theo. Bàn điền ở vòng 1, chốt bằng python3 -m lab10.checkpoint, rồi được sửa tiếp ở vòng 2. null = chưa đặt cổng này. Giải thích từng dòng: docs/guide.md, mục Cổng trong config (#ban-do).",
+  "business": {
+    "daily_refund_cap_vnd": 1500000,
+    "cost_budget_per_ticket_vnd": 1500,
+    "pilot_scope": {"mode": "all", "warehouses": [], "percent": 100},
+    "roi_min": 0.5
+  },
+  "operations": {
+    "pic": "NV-TUNG",
+    "approver_id": "NV-HANH",
+    "reviewers_on_shift": 1,
+    "review_capacity_per_hour": 6,
+    "max_queue_wait_minutes": 60,
+    "stop_conditions": [
+      "Khi có 1 lỗi ghi oan cho hãng thì NV-TUNG tắt file_carrier_fault trong 15 phút, ticket mới chuyển người duyệt",
+      "Khi có 1 lần gửi dữ liệu cá nhân người nhận cho hãng thì NV-TUNG tắt notify_carrier trong 15 phút",
+      "Khi có 1 khoản hoàn sai thì NV-TUNG tắt issue_refund, ticket mới chuyển người duyệt",
+      "Khi tổng hoàn tự động trong ngày chạm 1.500.000đ (trần business) thì khoản tiếp theo chuyển người duyệt; chạm 2.000.000đ (ngân sách Finance) thì tắt trợ lý theo điều kiện dừng đã ký",
+      "Khi có ca chờ người duyệt quá 60 phút hai lần trong một ca thì thu hẹp phạm vi pilot về một kho",
+      "Khi một hãng đã có 2 lỗi tự động trong ngày thì lỗi tiếp theo không tự ghi; NV-HANH xác nhận cuối ca trước khi ghi tay và NV-OANH báo hãng",
+      "Khi ngày chạy không khớp chính sách nào có hiệu lực, hoặc cờ index_active khác bản hiệu lực, thì NV-TUNG tắt file_carrier_fault tới khi pháp chế xác nhận bản đang áp dụng"
+    ],
+    "alert_channel": "#logix-hoantien-pilot-canhbao",
+    "decision_note": true,
+    "review_sampling_pct": 10
+  },
+  "legal": {
+    "pii_fields_blocked_to_third_party": ["recipient_contact", "customer_note"],
+    "carrier_fault_requires_recorded_cause": true
+  }
+}
